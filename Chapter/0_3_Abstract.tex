@@ -1,0 +1,18 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\begin{center}
+    \Large{\textbf{ABSTRACT}}\\
+\end{center}
+\vspace{1cm}
+Capacitive sensing technology has become a standard for touch-based interaction, yet most systems treat all finger contacts as uniform inputs. Recognizing and classifying specific finger types (e.g., thumb, index, or middle finger) from capacitive images can significantly enhance human-computer interaction and device ergonomics. However, implementing such recognition models on battery-constrained edge devices requires a strict balance between classification accuracy and power efficiency. This thesis investigates the application of Spiking Neural Networks (SNNs)—a bio-inspired, event-driven computing paradigm—as an energy-efficient solution for capacitive image-based finger recognition.
+
+The research begins by proposing specialized data exploration methods for the CapfingerId dataset to extract distinctive spatial features of different finger types. To establish a performance benchmark, a standard Convolutional Neural Network (CNN) is developed, followed by the design of an equivalent SNN architecture to allow for a direct comparison of spiking dynamics. Furthermore, the study explores the integration of transformer-based global attention through a Spiking Vision Transformer (Spiking ViT) model. The proposed architectures are rigorously evaluated by measuring their recognition accuracy across various finger categories and their corresponding energy footprints. \textcolor{red}{[Insert your results here: e.g., The results show that the Spiking ViT achieves an accuracy of X\% while consuming only Y mJ per inference]}. This study demonstrates that SNNs provide a viable, low-power alternative to traditional deep learning models for finger-type classification in next-generation interactive devices.
+\begin{flushright}
+\begin{tabular}{@{}c@{}}
+Student\\
+\textit{(Signature and full name)}
+\end{tabular}
+\end{flushright}
+
+\end{document}

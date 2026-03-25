@@ -1,0 +1,86 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+Lưu ý: Mẫu ĐATN này được thiết kế phù hợp với đồ án tốt nghiệp theo hướng nghiên cứu. Mẫu đề tài này là gợi ý tham khảo. Tuỳ từng đề tài, cấu trúc có thể thay đổi ít nhiều. Sinh viên cần tham khảo ý kiến của giáo viên hướng dẫn để đưa ra cấu trúc hợp lý nhất cho đề tài của mình. 
+
+Trước khi viết ĐATN, sinh viên cần đọc kỹ hướng dẫn và quy định chi tiết về cách viết ĐATN trong Phụ lục A. 
+
+Khi đóng quyển ĐATN, sinh viên cần lưu ý tuân thủ hướng dẫn ở phụ lục A.9
+
+SV cần đặc biệt lưu ý cách hành văn. Mỗi đoạn văn không được quá dài và cần có ý tứ rõ ràng, bao gồm duy nhất một ý chính và các ý phân tích bổ trợ để làm rõ hơn ý chính. Các câu văn trong đoạn phải đầy đủ chủ ngữ vị ngữ, cùng hướng đến chủ đề chung. Câu sau phải liên kết với câu trước, đoạn sau liên kết với đoạn trước. Trong văn phong khoa học, sinh viên không được dùng từ trong văn nói, không dùng các từ phóng đại, thái quá, các từ thiếu khách quan, thiên về cảm xúc, về quan điểm cá nhân như “tuyệt vời”, “cực hay”, “cực kỳ hữu ích”, v.v. Các câu văn cần được tối ưu hóa, đảm bảo rất khó để thể thêm hoặc bớt đi được dù chỉ một từ. Cách diễn đạt cần ngắn gọn, súc tích, không dài dòng.
+
+Chương 1 có độ dài từ 3 đến 6 trang với các nội dung sau đây
+
+
+\section{Problem Statement}
+\label{sec:dvd}
+In the current landscape of mobile and wearable technology, capacitive touch sensing serves as the primary medium for human-computer interaction (HCI). While modern interfaces are highly responsive to touch coordinates, they remain largely "finger-unaware," treating every contact point as a generic input regardless of whether it originates from a thumb, an index, or a middle finger.
+
+The ability to accurately classify specific finger types from raw capacitive images-often referred to as "capacitive heatmaps"-represents a significant leap toward Context-Aware Sensing. Such capability allows devices to dynamically adapt their user interface (UI) based on hand posture, improve ergonomic accessibility for one-handed use, and enable complex gesture shortcuts. However, the realization of this technology faces a critical bottleneck: The Energy-Accuracy Trade-off.
+
+Recognizing finger types requires continuous, "always-on" monitoring of the sensor data. Traditional Deep Learning models, such as Convolutional Neural Networks (CNNs) and the more recent Vision Transformers (ViTs), have set benchmarks in image classification accuracy. Nevertheless, these models are computationally expensive, involving massive floating-point operations that lead to high power consumption. For battery-constrained edge devices like smartwatches or IoT sensors, the energy drain of running such heavy models is often prohibitive.
+
+Consequently, there is an urgent need for a new computing paradigm that can maintain high classification performance while operating within a minimal energy budget. Spiking Neural Networks (SNNs), which emulate the event-driven and sparse communication of the biological brain, offer a promising solution. This research identifies the core problem as the design and optimization of SNN architectures-specifically comparing SNN-equivalents of CNNs and advanced Spiking Vision Transformers-to achieve energy-efficient finger type recognition using the CapfingerId dataset. Solving this problem is essential for bringing sophisticated, context-aware interaction to the next generation of low-power mobile hardware. 
+
+
+\section{Background and Problems of Research} 
+\label{sec:giaiphap}
+Sinh viên trước tiên cần trình bày tổng quan các kết quả của các nghiên cứu hiện nay cho bài toán giới thiệu ở phần \ref{sec:dvd}. Sau đấy, sinh viên đưa ra các hạn chế của các giải pháp hiện tại. 
+
+\subsection{Current State of Research in Finger Recognition}
+The field of capacitive finger recognition has transitioned from simple touch-point detection to complex identity and posture classification.
+
+\begin{itemize}
+\item \textbf{Baseline Studies on CapfingerId}: The \textbf{CapfingerId} \cite{CapfingerId} dataset was introduced by \textbf{Le and Mayer (2019)}, who demonstrated that Convolutional Neural Networks (CNNs) could achieve over 92\% accuracy in differentiating finger types (e.g., thumb vs. index) by treating capacitive raw data as low-resolution images.
+\item \textbf{Sequential and Feature-Based Improvements}: Recent work such as \textbf{SpeciFingers (2024)} \cite{SpeciFingers} has expanded on this by utilizing sequential features of touch events to improve identification stability. These studies confirm that spatial heatmaps from capacitive sensors contain enough structural information (size, pressure distribution, and shape) for high-fidelity classification.
+\item \textbf{The Shift to Transformers}: In the broader context of computer vision, \textbf{Vision Transformers (ViTs)} have recently outperformed CNNs in capturing global dependencies. According to recent benchmarks in 2025, ViTs exhibit superior robustness in biometric tasks due to their self-attention mechanisms, although they are typically applied to high-resolution RGB data rather than sparse capacitive images.
+
+\item \textbf{Emergence of Neuromorphic Approaches}: To address the energy constraints of edge devices, researchers have begun exploring \textbf{Spiking Neural Networks (SNNs)}. For example, recent developments in \textbf{finger vein recognition (2025)} using Adaptive Firing Threshold SNNs (ATSNN) have shown that spike-based encoding can transform static biometric images into energy-efficient spatio-temporal dynamics with minimal parameter counts.
+\end{itemize}
+
+\subsection{Limitations of Existing Solutions}
+Despite these advancements, current solutions face three primary bottlenecks that this thesis seeks to address:
+
+\begin{itemize}
+\item \textbf{The Efficiency Gap of Synchronous Models}: Traditional CNNs and ViTs rely on frame-based, synchronous processing. As highlighted in a \textbf{2025 MDPI review on SNNs in Imaging} \cite{MDPI_review_on_SNNs_in_Imaging}, these models execute massive Multiply-Accumulate (MAC) operations regardless of input sparsity. Since capacitive images are inherently sparse (most of the grid is "empty" or "zero"), frame-based models waste significant energy processing non-informative pixels.
+
+\item \textbf{High Power Consumption for "Always-on" Sensing}: While CNNs achieve high accuracy, their power footprint is often too high for wearable or mobile integration. Research on low-power FPGAs (2024) indicates that while traditional deep learning can consume several Watts, neuromorphic models can reduce this to the milliwatt ($mW$) or even microwatt ($\mu W$) range by exploiting event-driven computation.
+\item \textbf{Structural Complexity vs. Spiking Mechanics}: Integrating the global attention of Transformers into a spiking framework (Spiking ViT) is a cutting-edge challenge. Most existing Spiking ViT designs, such as \textbf{SpikeAtConv (2025)} \cite{SpikeAtConv}, have primarily been tested on large-scale datasets like \textbf{ImageNet} \cite{ImageNet}. Their applicability and efficiency on small-scale, low-resolution capacitive datasets like \textit{CapfingerId} remain largely unquantified and under-explored.Lack of Comparative Energy Benchmarking: There is a notable absence of empirical studies that directly measure and compare the energy-per-inference ($mJ/inference$) of CNNs vs. SNNs for the specific task of capacitive finger-type classification, leaving a gap in the literature for hardware-aware biometric design.
+\end{itemize}
+
+\section{ Objectives and Conceptual Framework}
+This study aims to develop energy-efficient deep learning models for capacitive image-based fingerprint recognition, with a particular focus on Spiking Neural Networks (SNNs). Based on the challenges identified in Section \ref{sec:giaiphap}, the thesis defines several key objectives and proposes corresponding methodological directions.
+
+\subsection{Objectives}
+The primary objectives of this thesis are as follows:
+
+\begin{enumerate}[label=\Roman*.]
+    \item \textbf{To explore and exploit the CapfingerId dataset effectively}: The CapfingerId dataset presents unique challenges due to its capacitive sensing nature, including noise, variability, and limited data diversity. This work aims to propose suitable data preprocessing, augmentation, and feature extraction methods to enhance the quality and usability of the dataset for deep learning models.
+    \item \textbf{To develop a Convolutional Neural Network (CNN) for fingerprint recognition}: A baseline CNN architecture will be designed and optimized to address the fingerprint recognition problem. This model serves as a performance benchmark in terms of accuracy and computational cost.
+    \item \textbf{To design a Spiking Neural Network (SNN) based on the RANC framework}: The model is constructed by following the structural principles and design guidelines suggested in RANC, ensuring consistency in the implementation and evaluation of all SNN-based approaches in this work.
+    \item \textbf{To extend Vision Transformer (ViT) architectures to the spiking domain
+    }: This objective explores the feasibility of integrating transformer-based models into SNN frameworks. A spiking version of Vision Transformer (Spiking ViT) will be proposed to capture long-range dependencies in fingerprint images while maintaining low energy consumption.
+\end{enumerate}
+
+\section{Contributions}
+This thesis makes the following main contributions:
+\begin{enumerate}
+    \item A data processing pipeline for the CapfingerId dataset.
+    \item A CNN-based baseline model for fingerprint recognition.
+    \item A SNN model based on the RANC framework.
+    \item A Spiking Vision Transformer.
+\end{enumerate}
+
+\section{Organization of Thesis}
+The remainder of this thesis is organized as follows.
+
+Chapter 2 presents the problem context and fundamental background knowledge relevant to this thesis. It begins by defining the scope of the research to clarify the problem setting and objectives. This chapter also introduces the CapfingerId dataset, which serves as the primary dataset used throughout this thesis, along with its characteristics and associated challenges. Furthermore, the theoretical foundations of Convolutional Neural Networks (CNNs) and Transformer-based models are presented, focusing on their roles in feature extraction and representation learning. In addition, an overview of Spiking Neural Networks (SNNs) is provided, emphasizing their computational principles and advantages in energy-efficient processing. Finally, the chapter introduces the RANC framework, which is adopted as the main framework for designing and implementing SNN models throughout this thesis.
+
+Chapter 3 presents the main methodologies of this thesis. Specifically, it first introduces several methods for processing and exploiting the CapfingerId dataset. Next, a Convolutional Neural Network (CNN) is designed based on the original reference model, alongside a Spiking Neural Network (SNN) developed using the RANC framework. Finally, this chapter explores existing studies and technical reports to design a Spiking Vision Transformer (SNN-ViT), aiming to integrate transformer-based architectures into the spiking domain.
+
+Chapter 4 presents the experimental evaluation, including quantitative analyses to compare the performance of different models. Specifically, this chapter focuses on assessing and comparing the effectiveness of CNN, SNN, and SNN-ViT models in terms of accuracy and energy efficiency.
+
+Chapter 5 concludes the thesis by summarizing the main findings and discussing the achieved results. It also provides insights into the limitations of the current work and proposes directions for future research. In particular, future work will emphasize the deployment of Spiking Neural Network (SNN) models on hardware platforms to fully exploit their potential for energy-efficient computation.
+
+
+\end{document}

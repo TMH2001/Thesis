@@ -1,0 +1,148 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+Touchscreen interaction is widely used in modern mobile devices, yet it is typically limited to two-dimensional touch inputs, restricting richer interaction capabilities. Recent studies have explored the use of capacitive images to identify which finger interacts with the screen, with the CapFingerId dataset providing a large-scale benchmark for this task. While convolutional neural networks (CNNs) achieve high classification accuracy, they often require significant computational resources. This thesis therefore investigates energy-efficient alternatives using Spiking Neural Networks (SNNs), including a model developed on the RANC framework with potential for FPGA deployment, although hardware implementation is beyond the scope of this work. In addition, a SpikeFormer-based SNN Vision Transformer is explored, leveraging direct training and strong representation learning capabilities instead of ANN-to-SNN conversion. This chapter presents the problem context, reviews related works, and introduces the necessary theoretical background.
+
+\section{Scope of Research}
+\subsection{Problem Definition}
+\subsubsection{Task Description}
+This thesis addresses the problem of classifying capacitive fingerprint images collected from touchscreen devices. Unlike traditional input modalities that only capture 2D touch locations, capacitive sensing enables the acquisition of low-resolution fingerprint-like images, which contain distinctive patterns related to different fingers. The CapFingerId \cite{CapfingerId} dataset provides a large-scale collection of such images, comprising various finger combinations, particularly focusing on commonly used fingers such as the thumb and index finger.
+
+However, capacitive images present several challenges compared to conventional optical fingerprint images. Specifically, they are characterized by low resolution, high noise levels, and significant variations in touch position and pressure. Furthermore, the task requires the model to learn position-invariant features in order to robustly distinguish between different fingers under varying interaction conditions. These characteristics make the classification problem non-trivial and motivate the need for robust and efficient learning approaches.
+
+\subsubsection{Problem Formulation}
+Formally, let the dataset be defined as:
+\begin{equation}
+D = \{(x_i, y_i)\}_{i=1}^{N}
+\end{equation}
+where $x_i$ denotes the input capacitive image and $y_i \in \{1, \ldots, K\}$ represents the corresponding class label. The objective is to learn a mapping function:
+\begin{equation}
+f(x; \theta) \rightarrow y
+\end{equation}
+where $\theta$ denotes the model parameters. The model is trained to minimize the cross-entropy loss for classification.
+
+\subsubsection{Evaluation Metrics}
+The primary evaluation metric is classification accuracy. Additional metrics such as precision, recall, and F1-score may also be considered to provide a more comprehensive evaluation of model performance.
+
+\subsubsection{Constraints and Research Gap}
+While convolutional neural networks (CNNs) have demonstrated strong performance on similar tasks, they often require significant computational resources. In contrast, Spiking Neural Networks (SNNs) offer a more energy-efficient alternative but remain underexplored for capacitive fingerprint classification. Furthermore, the application of transformer-based models within the SNN paradigm is still limited. These challenges motivate the development of efficient and accurate models in this thesis.
+
+\section{Related Works}
+\subsection{Fingerprint Recognition using Capacitive Data}
+\subsubsection{Motivation}
+Early approaches to finger identification often relied on external sensors or additional hardware, which introduces practical limitations in terms of cost, usability, and deployment \cite{CapfingerId}. In contrast, capacitive touchscreen technology inherently captures variations in electrical capacitance caused by the ridge and valley structures of human fingerprints, allowing it to generate fingerprint-like patterns without requiring dedicated biometric sensors \cite{review_capacitive, A_Review_of_Fingerprint_Sensors}. This capability has motivated recent research to utilize capacitive images as a lightweight and readily available source of biometric information for finger classification and user interaction.
+
+Furthermore, prior work has demonstrated that capacitive images can be effectively leveraged using deep learning techniques. For instance, the CapFingerId study shows that convolutional neural networks can achieve over 92\% accuracy in distinguishing between different fingers using only low-resolution capacitive images \cite{CapfingerId}. Similarly, more recent work such as SpeciFingers highlights the potential of learning spatio-temporal features from capacitive data to improve finger identification performance \cite{SpeciFingers}. These results indicate that capacitive fingerprint recognition is both feasible and promising for enhancing human-computer interaction.
+
+Despite these advances, capacitive fingerprint data remains challenging due to its low resolution, high noise levels, and sensitivity to touch variations such as position and pressure. These challenges motivate the exploration of more robust and efficient models, particularly energy-efficient approaches such as Spiking Neural Networks, which are better suited for deployment on edge devices.
+
+\subsubsection{CapFingerId Dataset}
+To support the training and evaluation process, the CapFingerId \cite{CapfingerId} dataset was constructed and publicly released to the research community.
+
+The data were collected from 20 participants (15 male and 5 female) with an average age of 22.4. The experimental device was an \textbf{LG Nexus 5} smartphone, modified at the kernel level to access raw data from the \textbf{Synaptics ClearPad 3350} touch sensor. Participants performed three fundamental touch interactions using all ten fingers: tapping, dragging, and scrolling in various directions.
+
+In total, 921,538 raw capacitive images were recorded at a rate of 20 frames per second. After preprocessing, including filtering invalid samples and applying blob detection to identify touch regions, the final dataset consists of 455,709 “blob images.”
+
+Each capacitive image has a resolution of 15 × 27 pixels, where each pixel corresponds to an area of 4.1 mm × 4.1 mm on the touchscreen surface. Pixel values represent changes in capacitance (measured in pF) relative to a baseline.
+
+The dataset is labeled for all ten fingers, enabling various classification scenarios. Common tasks include distinguishing between left and right thumbs, thumb versus index finger, and full classification across all ten fingers.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figure/hand.jpg}
+        \caption{Using two thumbs for interaction}
+    \end{subfigure}
+    \hspace{1cm}
+    \begin{subfigure}{0.15\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figure/cap_img.png}
+        \caption{Raw Data}
+    \end{subfigure}
+    \caption{Hai ảnh cạnh nhau}
+    \label{fig:two_images}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Figure/CapfingerId_video.png}
+    \caption{Volunteers carried out predefined tasks for data collection purposes}
+    \label{fig:my_image}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    % Hàng 1
+    \begin{minipage}{0.15\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/0.png}
+        \label{fig:sample1}
+    \end{minipage}
+    \hspace{0.02\linewidth}
+    \begin{minipage}{0.15\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/1.png}
+        \label{fig:sample2}
+    \end{minipage}
+
+    \vspace{0.5em} % khoảng cách giữa 2 hàng
+
+    % Hàng 2
+    \begin{minipage}{0.15\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/2.png}
+        \label{fig:sample3}
+    \end{minipage}
+    \hspace{0.02\linewidth}
+    \begin{minipage}{0.15\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/3.png}
+        \label{fig:sample4}
+    \end{minipage}
+
+    \caption{Representative samples from dataset.}
+    \label{fig:dataset_samples}
+\end{figure}
+
+\section{Spiking Neural Networks (SNN)}
+
+Spiking Neural Networks (SNNs) represent the third generation of neural network models, inspired by the dynamics of biological neurons. Unlike conventional artificial neural networks (ANNs) that process continuous values, SNNs operate using discrete spike events over time. This event-driven mechanism allows computations to occur only when spikes are present, leading to significantly reduced energy consumption. As a result, SNNs have emerged as a promising approach for energy-efficient computing, particularly in edge devices and neuromorphic hardware systems.
+
+\subsection{Neuron Model}
+
+A fundamental component of SNNs is the spiking neuron model. In this work, the Leaky Integrate-and-Fire (LIF) neuron is adopted due to its simplicity and effectiveness. The membrane potential of a neuron accumulates incoming spikes over time and decays gradually. When the membrane potential exceeds a predefined threshold, the neuron emits a spike and resets its state. This behavior can be described as:
+
+\begin{equation}
+\tau \frac{dV(t)}{dt} = -V(t) + I(t)
+\end{equation}
+
+where $V(t)$ is the membrane potential, $I(t)$ is the input current, and $\tau$ is the membrane time constant.
+
+\subsection{Spike Encoding}
+
+To process static image data within the SNN framework, it is necessary to convert input images into spike trains. One commonly used approach is \textit{rate coding}, where the intensity of each pixel is encoded as the firing rate of a spike train over a fixed time window. This method provides a simple and robust mapping from continuous-valued inputs to discrete spike representations and has been widely adopted in SNN-based image classification tasks \cite{Gerstner_Kistler_2002, diehl2015unsupervised}.
+
+In addition to rate coding, several alternative encoding schemes have been proposed to improve efficiency and temporal representation. \textit{Temporal coding} encodes information in the precise timing of spikes rather than their frequency. For example, in \textit{time-to-first-spike} coding, stronger input signals generate earlier spikes, allowing for faster inference with fewer spikes \cite{thorpe2001spike, masquelier2007unsupervised}. This approach is more biologically plausible and can significantly reduce latency.
+
+Another approach is \textit{latency coding}, which is closely related to temporal coding and represents input intensity by the delay before a neuron emits its first spike. This method is particularly useful for low-latency systems but may be sensitive to noise in the input data \cite{bohte2002error}.
+
+\textit{Population coding} represents a single input value using a group of neurons with overlapping receptive fields. Each neuron responds to a specific range of input values, enabling a distributed and potentially more robust representation \cite{eliasmith2003neural}. However, this method increases the number of neurons required and may lead to higher computational cost.
+
+Finally, \textit{event-based encoding} is commonly used in neuromorphic vision sensors, where spikes are generated only when changes in the input signal occur. Although this approach is highly efficient, it is less directly applicable to static image datasets such as CapFingerId \cite{gallego2020event}.
+
+In this work, rate coding is adopted due to its simplicity and compatibility with the considered models. Nevertheless, understanding alternative encoding schemes is important, as they offer different trade-offs between accuracy, latency, and energy efficiency.
+
+\subsection{Training Methods}
+
+Training SNNs remains a challenging problem due to the non-differentiable nature of spike generation. Two primary approaches have been proposed in the literature. The first approach is ANN-to-SNN conversion, where a pre-trained ANN is converted into an equivalent SNN by mapping activation values to firing rates. While this method preserves accuracy, it often introduces latency due to the need for long simulation time steps.
+
+The second approach is direct training, which applies backpropagation techniques to SNNs using surrogate gradients to approximate the non-differentiable spike function. This method enables end-to-end learning and has shown promising results in recent studies. In this thesis, direct training is particularly relevant for advanced architectures such as SNN-based Vision Transformers.
+
+\subsection{Advantages and Challenges}
+
+SNNs offer several advantages over traditional neural networks. Their event-driven nature enables sparse computation, resulting in lower power consumption and improved efficiency, especially when deployed on neuromorphic hardware. However, SNNs also present several challenges, including difficulties in training, sensitivity to encoding schemes, and potential performance gaps compared to conventional CNNs.
+
+Despite these challenges, the potential of SNNs for energy-efficient learning makes them a compelling choice for this work. In particular, their compatibility with neuromorphic frameworks motivates the exploration of hardware-aware implementations, as discussed in the following section.\subsection{Neuromorphic Hardware \& Framework (RANC)}
+\subsection{Vision Transformer \& SNN-ViT}
+
+\end{document}
