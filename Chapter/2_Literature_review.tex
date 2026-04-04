@@ -126,7 +126,7 @@ In addition to rate coding, several alternative encoding schemes have been propo
 
 Another approach is \textit{latency coding}, which is closely related to temporal coding and represents input intensity by the delay before a neuron emits its first spike. This method is particularly useful for low-latency systems but may be sensitive to noise in the input data \cite{bohte2002error}.
 
-\textit{Population coding} represents a single input value using a group of neurons with overlapping receptive fields. Each neuron responds to a specific range of input values, enabling a distributed and potentially more robust representation \cite{eliasmith2003neural}. However, this method increases the number of neurons required and may lead to higher computational cost.
+\textit{Population coding} represents a single input value using a group of neurons with overlapping receptive fields. Each neuron responds to a specific range of input values, enabling a distributed and potentially more robust representation \cite{eliassmith2003neural}. However, this method increases the number of neurons required and may lead to higher computational cost.
 
 Finally, \textit{event-based encoding} is commonly used in neuromorphic vision sensors, where spikes are generated only when changes in the input signal occur. Although this approach is highly efficient, it is less directly applicable to static image datasets such as CapFingerId \cite{gallego2020event}.
 
@@ -142,7 +142,47 @@ The second approach is direct training, which applies backpropagation techniques
 
 SNNs offer several advantages over traditional neural networks. Their event-driven nature enables sparse computation, resulting in lower power consumption and improved efficiency, especially when deployed on neuromorphic hardware. However, SNNs also present several challenges, including difficulties in training, sensitivity to encoding schemes, and potential performance gaps compared to conventional CNNs.
 
-Despite these challenges, the potential of SNNs for energy-efficient learning makes them a compelling choice for this work. In particular, their compatibility with neuromorphic frameworks motivates the exploration of hardware-aware implementations, as discussed in the following section.\subsection{Neuromorphic Hardware \& Framework (RANC)}
+Despite these challenges, the potential of SNNs for energy-efficient learning makes them a compelling choice for this work. In particular, their compatibility with neuromorphic frameworks motivates the exploration of hardware-aware implementations, as discussed in the following section.
+\subsection{Neuromorphic Hardware \& Framework (RANC)}
+\subsubsection{Overview of RANC Architecture}
+The Reconfigurable Architecture for Neuromorphic Computing (RANC) is a highly scalable and flexible hardware ecosystem designed to optimize the execution of Spiking Neural Networks (SNNs). Unlike traditional von Neumann architectures, RANC adopts a distributed and event-driven design paradigm, where computations are performed locally within processing units and communication occurs only when spike events are generated.
+
+From a structural perspective, the RANC system is composed of multiple interconnected processing elements, referred to as neuron cores. Each core integrates a group of spiking neurons along with their associated synaptic weights and local SRAM memory for storing configuration parameters. These cores operate in parallel and are synchronized through a global clock signal (global tick), enabling efficient large-scale neural computation.
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.95\linewidth]{Figure/ComponentDiagram.pdf}
+    \caption{High level architectural overview of RANC components.}
+    \vspace{-12pt}
+    \label{fig:arch_component_overview}
+\end{figure}
+
+Communication between neuron cores is implemented through an on-chip network (NoC) based on a 2D mesh topology Figure~\ref{fig:arch_component_overview}, utilizing a packet-based routing mechanism. In this scheme, when a neuron generates a spike, the destination information is retrieved from the core’s SRAM to construct a packet. Each packet contains four key fields: signed relative offsets $dx$ and $dy$ used for routing the packet to the target core, an axon index to identify the receiving neuron, and a delivery tick offset that specifies the time at which the spike will be processed by the scheduler. The event-driven communication mechanism, combined with deterministic XY routing, minimizes unnecessary data movement and significantly improves the overall energy efficiency of the system.
+
+A key advantage of RANC lies in its strong reconfigurability. The architecture allows flexible mapping of various neural network topologies and configurations onto the hardware through adjustable parameters such as the number of neurons, the number of axons per core, and the precision of synaptic weights. This feature clearly distinguishes RANC from fixed-function neuromorphic systems implemented as ASIC chips, making it an ideal platform for research, prototyping, and optimization of novel SNN models before deployment on silicon.
+
+Overall, the combination of distributed core architecture, event-driven communication, and high reconfigurability enables RANC to serve as an effective platform for implementing energy-efficient spiking neural networks, particularly in edge computing environments.
+
+\subsubsection{Neuron and Synapse Mapping}
+In the RANC ecosystem, the mapping of neurons and synapses is implemented based on a flexible crossbar-based architecture. Each Neuron Block emulates a crossbar connecting $N(a)$ input axons to $N(n)$ output neurons, allowing for a maximum of $N(a)$×$N(n)$ synaptic connections per core. All configuration parameters—including weights, activation thresholds, and voltage potentials—are stored centrally within the local core SRAM. The primary advantage of RANC over fixed-function architectures, such as IBM's TrueNorth, lies in its ability to customize the core structure to optimize mapping efficiency for specific applications.
+\begin{itemize}
+    \item \textbf{Vector-Matrix Multiplication (VMM)}: By supporting symmetric threshold behavior, RANC enables the mapping of signed calculations without the need for complex and resource-heavy feedback systems.This optimization reduces the required neuron and axon footprint by approximately \textbf{55-57\%}.
+    \item \textbf{Convolutional Neural Networks (CNNs)}: RANC allows for the deployment of heterogeneous, large-scale cores (e.g., 1024 axons × 256 neurons). This mechanism significantly improves neuron utilization—increasing it from 0.7\% to 94.5\%—by minimizing the need for extensive input data repetition across multiple cores.
+\end{itemize}
+
+Through the optimization of core sizes to fully utilize BRAM primitives on the Alveo U250 FPGA, the architecture can scale to emulate as many as 259,072 distinct neurons and over 73.3 million distinct synapses on a single hardware device.
+\subsubsection{Communication Mechanism}
+\subsubsection{Reconfigurability and Flexibility}
+\subsubsection{FPGA Implementation}
+Field-Programmable Gate Arrays (FPGAs) provide a practical and flexible platform for implementing neuromorphic architectures such as RANC. Unlike application-specific integrated circuits (ASICs), FPGAs allow rapid prototyping and iterative design, making them particularly suitable for research and development of Spiking Neural Networks (SNNs). The reconfigurable nature of FPGAs aligns well with the design philosophy of RANC, enabling efficient mapping of neuron cores, synaptic connections, and routing networks onto hardware.
+
+In the context of RANC, the architecture can be synthesized and deployed on FPGA devices by implementing neuron cores as parallel processing modules and the on-chip communication network as configurable routing logic. The use of packet-based dimension-order (XY) routing simplifies the hardware implementation, as spike events can be efficiently encoded, transmitted, and scheduled using digital logic. Furthermore, the global tick mechanism ensures synchronized operation across all processing elements, maintaining timing accuracy throughout the network. 
+One of the key advantages of FPGA-based implementation is the ability to evaluate energy efficiency and performance trade-offs under realistic hardware constraints. By exploiting parallelism and event-driven computation, SNNs deployed on FPGA platforms can achieve significant reductions in power consumption compared to conventional GPU-based implementations. This makes FPGA-based neuromorphic systems particularly attractive for edge computing applications, where energy and latency are critical considerations.
+However, FPGA implementations also introduce certain challenges. Resource limitations, such as the availability of Block RAM (BRAM) and Look-Up Tables (LUTs), can restrict the scale of deployable SNN models. Additionally, efficient mapping from high-level SNN models to hardware requires careful design to balance accuracy, latency, and hardware utilization.
+In this thesis, although the proposed SNN model is developed with consideration for the RANC architecture, the actual deployment on FPGA hardware is beyond the scope of this work. Nevertheless, the compatibility of the proposed model with RANC highlights its potential for future implementation on reconfigurable hardware platforms, paving the way for energy-efficient and deployable fingerprint recognition systems.
+
+In this thesis, although the proposed SNN model is developed with consideration for the RANC architecture, the actual deployment on FPGA hardware is beyond the scope of this work. Nevertheless, the compatibility of the proposed model with RANC highlights its potential for future implementation on reconfigurable hardware platforms, paving the way for energy-efficient and deployable fingerprint recognition systems.
+
 \subsection{Vision Transformer \& SNN-ViT}
 
 \end{document}
