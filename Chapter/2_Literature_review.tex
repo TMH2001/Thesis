@@ -184,5 +184,42 @@ In this thesis, although the proposed SNN model is developed with consideration 
 In this thesis, although the proposed SNN model is developed with consideration for the RANC architecture, the actual deployment on FPGA hardware is beyond the scope of this work. Nevertheless, the compatibility of the proposed model with RANC highlights its potential for future implementation on reconfigurable hardware platforms, paving the way for energy-efficient and deployable fingerprint recognition systems.
 
 \subsection{Vision Transformer \& SNN-ViT}
+\subsubsection{Vision Transformer}
+Vision Transformers (ViTs) have recently emerged as a powerful alternative to convolutional neural networks (CNNs) for image recognition by leveraging self-attention mechanisms to model global dependencies across an entire image. Unlike CNNs, which rely on local receptive fields and strong inductive biases such as translation invariance, ViTs enable direct modeling of long-range relationships between image regions, making them particularly effective for capturing distributed and non-local patterns. This characteristic is especially relevant for challenging data such as low-resolution and noisy capacitive images, where discriminative features may not be confined to local neighborhoods. However, ViTs typically require large-scale training data and incur high computational cost, which limits their applicability in resource-constrained environments. These limitations motivate further exploration of efficient variants, including the integration of ViTs with energy-efficient paradigms such as Spiking Neural Networks (SNNs) \cite{dosovitskiy2021imageworth16x16words}, \cite{touvron2021trainingdataefficientimagetransformers}.
+
+The core idea of a Vision Transformer (ViT) is to treat an image as a sequence of patches, analogous to tokens in natural language processing. Given an input image $x \in \mathbb{R}^{H \times W \times C}$, the image is divided into a grid of non-overlapping patches, each of size $P \times P$. The total number of patches is $N = \frac{HW}{P^2}$. Each patch is then flattened into a vector and projected into a latent embedding space through a learnable linear transformation.
+
+To retain spatial information, positional embeddings are added to the patch embeddings. In addition, a learnable classification token, denoted as $x_{\text{cls}}$, is prepended to the sequence. The final input sequence to the Transformer encoder can be written as:
+
+\begin{equation}
+Z_0 = [x_{\text{cls}}; x_1 E; x_2 E; \dots; x_N E] + E_{\text{pos}},
+\end{equation}
+
+where $x_i$ denotes the $i$-th image patch, $E$ is the patch embedding projection matrix, and $E_{\text{pos}}$ represents the positional embeddings. The resulting sequence of embeddings serves as the input to a standard Transformer encoder.
+
+The Transformer encoder consists of a stack of identical layers, each composed of a multi-head self-attention (MHSA) mechanism and a position-wise feed-forward network (FFN), combined with residual connections and layer normalization. The self-attention mechanism allows each patch to attend to all other patches in the image, enabling the model to learn global contextual relationships. Specifically, attention weights are computed based on the similarity between query, key, and value representations derived from the input embeddings, allowing the model to dynamically focus on relevant regions of the image. The use of multiple attention heads further enhances the model’s capacity to capture diverse patterns and interactions across different representation subspaces.
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.95\linewidth]{Figure/model_scheme.pdf}
+    \caption{Vision Transformer Overview.}
+    \vspace{-12pt}
+    \label{fig:ViT_scheme}
+\end{figure}
+
+After passing through the Transformer encoder, the representation corresponding to the classification token is used as a global image descriptor. This representation is then fed into a multi-layer perceptron (MLP) head to produce the final class prediction. Compared to CNN-based approaches, which progressively aggregate local features through convolution and pooling operations, ViTs perform global reasoning at every layer, providing a more flexible and expressive modeling framework.
+
+Despite these advantages, Vision Transformers also present several limitations. In particular, the lack of strong inductive biases makes them less data-efficient than CNNs, often requiring large-scale datasets to achieve competitive performance. Additionally, the quadratic complexity of the self-attention mechanism with respect to the number of patches leads to increased computational and memory costs, which can be prohibitive for deployment on edge devices. These challenges are especially relevant in the context of this thesis, where energy efficiency and hardware constraints are key considerations.
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.3\linewidth]{Figure/20201002_selected_attention_examples.pdf}
+    \caption{Representative examples of attention from the output token to the input space.}
+    \vspace{-12pt}
+    \label{fig:Representative_examples_of_attention_from_the_output_token_to_the_input_space}
+\end{figure}
+
+In the context of capacitive fingerprint recognition, the ability of ViTs to model global relationships is particularly beneficial. Capacitive images are characterized by low resolution, high noise levels, and significant variability in touch position and pressure, making it difficult for purely local feature extractors to capture discriminative patterns. By leveraging self-attention, ViTs can integrate information across the entire spatial domain, potentially improving robustness and classification accuracy. Nevertheless, the high energy consumption of conventional ViTs motivates the exploration of more efficient architectures. This leads to the investigation of Spiking Neural Network-based Vision Transformers (SNN-ViT), which aim to combine the representational power of Transformers with the energy efficiency of event-driven computation.
+
 
 \end{document}
