@@ -1,16 +1,45 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 
-\section{Overview}
+\section{Dataset Processing and Baseline CNN Model}
+\subsection{Design Overview}
 
-Phần này mô tả tổng quan giải pháp gồm những bước chính nào, hoạt động ra sao. Mục tiêu của phần này là cho người đọc một cái nhìn tổng thể về giải pháp. Để cho dễ hiểu thì nên có một biểu đồ mô tả luồng hoạt động của giải pháp đề xuất. 
+This section presents the overall design of the proposed Spiking Neural Network (SNN) for capacitive image-based fingerprint recognition. The model is developed to exploit the event-driven nature of spiking computation while maintaining competitive recognition performance compared to conventional deep learning approaches.
 
-\section{Tên của nội dung chi tiết thứ 1}
-Tên của các chương này đặt theo nội dung mà sinh viên sẽ trình bày trong từng chương. 
+The input to the network is a preprocessed capacitive image of size $8 \times 8$, representing the spatial distribution of finger contact on the touchscreen sensor. To enable processing within the spiking domain, the static input is first transformed into a temporal spike representation using a burst encoding scheme over a fixed time window. This encoding allows the model to capture both spatial and temporal characteristics of the input signal.
 
-Các chương tiếp theo mô tả chi tiết về các bước, các thuật toán trong giải pháp đề xuất. Có thể trình bày pseudocode cho từng bước. Chú ý, pseudocode chỉ có tác dụng làm chi tiết hoá giải thuật chứ không thay thế được phần thuyết minh về giải thuật. Đối với những chi tiết kỹ thuật khó hiểu nên có các hình minh hoạ để người đọc dễ hiểu. Mỗi một thuật toán/bước thực hiện nên tách ra thành một chương. 
+The overall architecture follows a multi-stage processing pipeline. First, the encoded input is converted into a one-dimensional representation and partitioned into multiple overlapping segments. These segments are processed in parallel by independent spiking layers, enabling the network to extract localized features from different regions of the input. The use of overlapping segments ensures that important spatial patterns are preserved across segment boundaries and improves robustness to noise and variability in the capacitive images.
 
-\section{Tên của nội dung chi tiết thứ 2}
+Next, the outputs from the parallel spiking layers are aggregated and further transformed by an additional spiking layer to produce a compact and discriminative feature representation. Finally, a pooling and classification stage is applied to generate the predicted finger identity.
 
+The design of the proposed SNN is guided by three key principles. First, temporal encoding is employed to convert static inputs into spike trains, allowing the network to leverage the inherent advantages of spiking computation. Second, parallel processing with overlapping segmentation is introduced to enhance feature extraction capability while maintaining a lightweight structure. Third, hierarchical aggregation is used to progressively refine features and produce a robust representation for classification.
+
+Overall, the proposed architecture provides a balance between computational efficiency and recognition performance, making it suitable for deployment in resource-constrained and energy-sensitive environments.
+
+\subsection{Input Encoding Scheme}
+
+\subsection{Network Architecture Design}
+
+\subsubsection{Input Representation}
+
+\subsubsection{Parallel Segmentation Strategy}
+
+\subsubsection{Spiking Feature Extraction}
+
+\subsubsection{Feature Aggregation}
+
+\subsubsection{Output Layer}
+
+\subsection{Temporal Dynamics and Information Flow}
+
+\subsection{Training Strategy}
+
+\subsection{Regularization Techniques}
+
+\subsection{Design Rationale and Advantages}
+
+\subsection{Summary}
+\section{Spiking Neural Network based on RANC Architecture}
+\section{Spiking Vision Transformer (Spiking ViT)}
 
 \end{document}
