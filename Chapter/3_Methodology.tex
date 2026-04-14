@@ -21,10 +21,6 @@ Overall, the proposed architecture provides a balance between computational effi
 \subsection{Input Encoding Scheme}
 
 To enable processing of static capacitive images within the spiking domain, the input is converted into spike trains using a burst encoding scheme. In this approach, each pixel intensity is represented by a short burst of spikes, where stronger intensities generate a higher number of spikes within a fixed temporal window. This encoding allows the model to capture both the magnitude and temporal characteristics of the input while remaining compatible with event-driven neuromorphic computation.
-<<<<<<< HEAD
-
-\subsection{Network Architecture Design}
-=======
 \paragraph{Mathematical Formulation}
 
 Let $x_i \in [0,1]$ denote the normalized intensity of the $i$-th pixel, and let $T$ denote the number of discrete time steps (i.e., the encoding window or number of bins). The burst encoding scheme maps each pixel value to a binary spike train $S_i(t)$ of length $T$, where the number of spikes is proportional to the input intensity.
@@ -66,14 +62,13 @@ To clarify the encoding process, consider a pixel with normalized intensity $x =
 \end{itemize}
 
 These examples illustrate how increasing the number of time steps allows for a finer-grained representation of input intensity while preserving the burst structure.
->>>>>>> b9381c8ad4557ab61177516a2c4362d449f3b230
 
 \paragraph{Effect of Encoding Window Size}
 An important parameter in the proposed encoding scheme is the number of time steps $T$, which determines the temporal resolution of the spike representation. In this work, $T$ is varied from 1 to 16 to investigate its impact on recognition performance. When $T = 1$, the encoding reduces to a binary representation, where each pixel is mapped to a single spike or no spike, resulting in minimal temporal information. As $T$ increases, the number of possible spike levels grows, enabling a finer-grained representation of input intensity through longer spike bursts.
 
 This increase in temporal resolution allows the network to capture more detailed variations in the input signal, which is expected to improve feature discrimination and classification accuracy. However, larger values of $T$ also introduce higher computational cost and longer inference latency. Therefore, evaluating different values of $T$ provides insight into the trade-off between accuracy and efficiency.
 
-In the experimental section, we systematically analyze the performance of the proposed model under different encoding window sizes, demonstrating how the choice of $T$ influences the overall effectiveness of the system.
+In the experimental section, i systematically analyze the performance of the proposed model under different encoding window sizes, demonstrating how the choice of $T$ influences the overall effectiveness of the system.
 
 \subsection{Network Architecture Design}
 
@@ -86,9 +81,9 @@ This design enables simultaneous processing across multiple spiking layers, sign
 In addition to improving computational speed, the overlapping segmentation strategy preserves continuity of spatial information across segment boundaries. This ensures that important local patterns are not lost and allows the model to maintain robustness against noise and variations in the capacitive images. As a result, the proposed approach achieves a balance between efficient computation and effective feature representation.
 \subsubsection{Spiking Feature Extraction}
 
-Spiking feature extraction in the proposed architecture is performed using the Tea layer, which serves as the fundamental computational unit of the network. Each Tea layer implements a hardware-constrained spiking transformation that approximates neuromorphic computation while remaining trainable using gradient-based methods.
+Spiking feature extraction in the proposed architecture is performed using the \textit{Tea layer}, which serves as the fundamental computational unit of the network. Each \textit{Tea layer} implements a hardware-constrained spiking transformation that approximates neuromorphic computation while remaining trainable using gradient-based methods.
 
-Let $\mathbf{x} \in \{0,1\}^N$ denote the input spike vector after encoding. The Tea layer maintains two sets of parameters: a static weight matrix $\mathbf{W} \in \{-1,1\}^{N \times M}$ and a trainable connection matrix $\mathbf{C} \in [0,1]^{N \times M}$. During the forward pass, the connection matrix is discretized into a binary mask:
+Let $\mathbf{x} \in \{0,1\}^N$ denote the input spike vector after encoding. The \textit{Tea layer} maintains two sets of parameters: a static weight matrix $\mathbf{W} \in \{-1,1\}^{N \times M}$ and a trainable connection matrix $\mathbf{C} \in [0,1]^{N \times M}$. During the forward pass, the connection matrix is discretized into a binary mask:
 
 \[
 \hat{\mathbf{C}} = \text{round}(\mathbf{C}), \quad \hat{\mathbf{C}} \in \{0,1\}^{N \times M}
@@ -126,7 +121,7 @@ where $H(\cdot)$ is the Heaviside step function applied element-wise. During tra
 
 to enable gradient-based optimization. A custom gradient is used for the rounding operation to allow gradients to pass through unchanged during backpropagation.
 
-Each input segment is processed independently by a dedicated Tea layer, allowing the network to extract localized spiking features in parallel. The resulting output vectors encode the spatio-temporal firing behavior of neurons and serve as high-level representations for subsequent aggregation and classification.
+Each input segment is processed independently by a dedicated \textit{Tea layer}, allowing the network to extract localized spiking features in parallel. The resulting output vectors encode the spatio-temporal firing behavior of neurons and serve as high-level representations for subsequent aggregation and classification.
 
 This formulation enables efficient computation using binary weights and sparse activations, while preserving the ability to train the network using standard deep learning techniques.
 

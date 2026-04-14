@@ -120,20 +120,6 @@ where $V(t)$ is the membrane potential, $I(t)$ is the input current, and $\tau$ 
 
 \subsection{Spike Encoding}
 
-To process static image data within the SNN framework, it is necessary to convert input images into spike trains. One commonly used approach is \textit{rate coding}, where the intensity of each pixel is encoded as the firing rate of a spike train over a fixed time window. This method provides a simple and robust mapping from continuous-valued inputs to discrete spike representations and has been widely adopted in SNN-based image classification tasks \cite{Gerstner_Kistler_2002, diehl2015unsupervised}.
-
-In addition to rate coding, several alternative encoding schemes have been proposed to improve efficiency and temporal representation. \textit{Temporal coding} encodes information in the precise timing of spikes rather than their frequency. For example, in \textit{time-to-first-spike} coding, stronger input signals generate earlier spikes, allowing for faster inference with fewer spikes \cite{thorpe2001spike, masquelier2007unsupervised}. This approach is more biologically plausible and can significantly reduce latency.
-
-Another approach is \textit{latency coding}, which is closely related to temporal coding and represents input intensity by the delay before a neuron emits its first spike. This method is particularly useful for low-latency systems but may be sensitive to noise in the input data \cite{bohte2002error}.
-
-\textit{Population coding} represents a single input value using a group of neurons with overlapping receptive fields. Each neuron responds to a specific range of input values, enabling a distributed and potentially more robust representation \cite{eliassmith2003neural}. However, this method increases the number of neurons required and may lead to higher computational cost.
-
-Finally, \textit{event-based encoding} is commonly used in neuromorphic vision sensors, where spikes are generated only when changes in the input signal occur. Although this approach is highly efficient, it is less directly applicable to static image datasets such as CapFingerId \cite{gallego2020event}.
-
-In this work, rate coding is adopted due to its simplicity and compatibility with the considered models. Nevertheless, understanding alternative encoding schemes is important, as they offer different trade-offs between accuracy, latency, and energy efficiency.
-
-\subsection{Spike Encoding}
-
 To process static image data within the SNN framework, it is necessary to convert input images into spike trains. In this work, \textit{burst coding} is adopted as the primary encoding scheme. Unlike traditional rate coding, burst coding represents input intensity using short bursts of spikes, where both the number of spikes within a burst and their temporal spacing carry information. Stronger input signals typically generate bursts with higher spike counts and shorter inter-spike intervals. This encoding strategy enables richer temporal dynamics while maintaining relatively low latency.
 
 Burst coding offers several advantages over conventional rate coding. By transmitting multiple spikes in rapid succession, it can improve robustness to noise and enhance signal reliability, especially in early layers of the network \cite{panda2016unsupervisedregenerativelearninghierarchical}. Moreover, burst-based representations can achieve a better trade-off between energy efficiency and information fidelity, as meaningful information is conveyed in compact temporal patterns rather than long spike trains \cite{park2019fastefficientinformationtransmission}.
