@@ -2,13 +2,15 @@
 \begin{document}
 
 \section{Dataset Processing and Baseline CNN Model}
+
+\section{Spiking Neural Network based on RANC Architecture}
 \subsection{Design Overview}
 
 This section presents the overall design of the proposed Spiking Neural Network (SNN) for capacitive image-based fingerprint recognition. The model is developed to exploit the event-driven nature of spiking computation while maintaining competitive recognition performance compared to conventional deep learning approaches.
 
 The input to the network is a preprocessed capacitive image of size $8 \times 8$, representing the spatial distribution of finger contact on the touchscreen sensor. To enable processing within the spiking domain, the static input is first transformed into a temporal spike representation using a burst encoding scheme over a fixed time window. This encoding allows the model to capture both spatial and temporal characteristics of the input signal.
 
-The overall architecture follows a multi-stage processing pipeline. First, the encoded input is converted into a one-dimensional representation and partitioned into multiple overlapping segments. These segments are processed in parallel by independent spiking layers, enabling the network to extract localized features from different regions of the input. The use of overlapping segments ensures that important spatial patterns are preserved across segment boundaries and improves robustness to noise and variability in the capacitive images.
+The overal architecture follows a multi-stage processing pipeline. First, the encoded input is converted into a one-dimensional representation and partitioned into multiple overlapping segments. These segments are processed in parallel by independent spiking layers, enabling the network to extract localized features from different regions of the input. The use of overlapping segments ensures that important spatial patterns are preserved across segment boundaries and improves robustness to noise and variability in the capacitive images.
 
 Next, the outputs from the parallel spiking layers are aggregated and further transformed by an additional spiking layer to produce a compact and discriminative feature representation. Finally, a pooling and classification stage is applied to generate the predicted finger identity.
 
@@ -18,15 +20,140 @@ Overall, the proposed architecture provides a balance between computational effi
 
 \subsection{Input Encoding Scheme}
 
-\subsection{Network Architecture Design}
+To enable processing of static capacitive images within the spiking domain, the input is converted into spike trains using a burst encoding scheme. In this approach, each pixel intensity is represented by a short burst of spikes, where stronger intensities generate a higher number of spikes within a fixed temporal window. This encoding allows the model to capture both the magnitude and temporal characteristics of the input while remaining compatible with event-driven neuromorphic computation.
+\paragraph{Mathematical Formulation}
 
-\subsubsection{Input Representation}
+Let $x_i \in [0,1]$ denote the normalized intensity of the $i$-th pixel, and let $T$ denote the number of discrete time steps (i.e., the encoding window or number of bins). The burst encoding scheme maps each pixel value to a binary spike train $S_i(t)$ of length $T$, where the number of spikes is proportional to the input intensity.
+
+Specifically, the number of spikes generated for each pixel is given by:
+\[
+n_i = \left\lfloor T \cdot x_i \right\rceil
+\]
+where $\lfloor \cdot \rceil$ denotes rounding to the nearest integer.
+
+The corresponding spike train is then defined as:
+\[
+S_i(t) =
+\begin{cases}
+1, & \text{if } t < n_i \\
+0, & \text{otherwise}
+\end{cases}
+\quad \text{for } t = 0, 1, \dots, T-1
+\]
+
+This formulation produces a deterministic burst of spikes occurring at the beginning of the time window, where higher input intensities result in a greater number of spikes within the burst. The encoding is applied independently to each pixel, resulting in a spatiotemporal spike tensor of shape $T \times H \times W$ for each input sample.
+
+\paragraph{Illustrative Examples}
+
+To clarify the encoding process, consider a pixel with normalized intensity $x = 0.6$.
+
+\begin{itemize}
+    \item For $T = 1$, the number of spikes is $n = \lfloor 1 \cdot 0.6 \rceil = 1$, resulting in the spike train:
+    \[
+    S(t) = [1]
+    \]
+    which corresponds to a binary threshold representation.
+
+    \item For $T = 4$, the number of spikes is $n = \lfloor 4 \cdot 0.6 \rceil = 2$, resulting in the spike train:
+    \[
+    S(t) = [1,\,1,\,0,\,0]
+    \]
+    which forms a burst of two spikes at the beginning of the time window.
+\end{itemize}
+
+These examples illustrate how increasing the number of time steps allows for a finer-grained representation of input intensity while preserving the burst structure.
+
+\paragraph{Effect of Encoding Window Size}
+An important parameter in the proposed encoding scheme is the number of time steps $T$, which determines the temporal resolution of the spike representation. In this work, $T$ is varied from 1 to 16 to investigate its impact on recognition performance. When $T = 1$, the encoding reduces to a binary representation, where each pixel is mapped to a single spike or no spike, resulting in minimal temporal information. As $T$ increases, the number of possible spike levels grows, enabling a finer-grained representation of input intensity through longer spike bursts.
+
+This increase in temporal resolution allows the network to capture more detailed variations in the input signal, which is expected to improve feature discrimination and classification accuracy. However, larger values of $T$ also introduce higher computational cost and longer inference latency. Therefore, evaluating different values of $T$ provides insight into the trade-off between accuracy and efficiency.
+
+In the experimental section, we systematically analyze the performance of the proposed model under different encoding window sizes, demonstrating how the choice of $T$ influences the overall effectiveness of the system.
+
+\subsection{Network Architecture Design}
 
 \subsubsection{Parallel Segmentation Strategy}
 
+To enhance both computational efficiency and feature extraction capability, the input vector is partitioned into multiple overlapping segments that can be processed in parallel. Specifically, the 64-dimensional input vector is divided into seven segments, each consisting of 16 elements, with an overlap of 8 elements between consecutive segments (e.g., indices 0--15, 8--23, 16--31, and so on).
+
+This design enables simultaneous processing across multiple spiking layers, significantly reducing the effective computation time compared to a fully sequential architecture. Since each segment is handled independently, the network can exploit parallelism at the layer level, which is particularly beneficial in neuromorphic systems where parallel spike processing is inherently supported.
+
+In addition to improving computational speed, the overlapping segmentation strategy preserves continuity of spatial information across segment boundaries. This ensures that important local patterns are not lost and allows the model to maintain robustness against noise and variations in the capacitive images. As a result, the proposed approach achieves a balance between efficient computation and effective feature representation.
 \subsubsection{Spiking Feature Extraction}
 
-\subsubsection{Feature Aggregation}
+Spiking feature extraction in the proposed architecture is performed using the Tea layer, which serves as the fundamental computational unit of the network. Each Tea layer implements a hardware-constrained spiking transformation that approximates neuromorphic computation while remaining trainable using gradient-based methods.
+
+Let $\mathbf{x} \in \{0,1\}^N$ denote the input spike vector after encoding. The Tea layer maintains two sets of parameters: a static weight matrix $\mathbf{W} \in \{-1,1\}^{N \times M}$ and a trainable connection matrix $\mathbf{C} \in [0,1]^{N \times M}$. During the forward pass, the connection matrix is discretized into a binary mask:
+
+\[
+\hat{\mathbf{C}} = \text{round}(\mathbf{C}), \quad \hat{\mathbf{C}} \in \{0,1\}^{N \times M}
+\]
+
+The effective synaptic matrix is then computed as:
+
+\[
+\mathbf{S} = \mathbf{W} \odot \hat{\mathbf{C}}
+\]
+
+where $\odot$ denotes element-wise multiplication. The membrane potential $\mathbf{u} \in \mathbb{R}^M$ of the neurons is computed as:
+
+\[
+\mathbf{u} = \mathbf{x} \cdot \mathbf{S} + \mathbf{b}
+\]
+
+where $\mathbf{b}$ is the bias vector (optionally applied and similarly discretized).
+
+To produce the output spikes, a thresholding operation is applied. During inference, this corresponds to a hard spiking function:
+
+\[
+\mathbf{y} = H(\mathbf{u}) = 
+\begin{cases}
+1, & \text{if } u_i \geq 0 \\
+0, & \text{otherwise}
+\end{cases}
+\]
+
+where $H(\cdot)$ is the Heaviside step function applied element-wise. During training, this non-differentiable operation is approximated using a sigmoid activation function:
+
+\[
+\mathbf{y} = \sigma(\mathbf{u}) = \frac{1}{1 + e^{-\mathbf{u}}}
+\]
+
+to enable gradient-based optimization. A custom gradient is used for the rounding operation to allow gradients to pass through unchanged during backpropagation.
+
+Each input segment is processed independently by a dedicated Tea layer, allowing the network to extract localized spiking features in parallel. The resulting output vectors encode the spatio-temporal firing behavior of neurons and serve as high-level representations for subsequent aggregation and classification.
+
+This formulation enables efficient computation using binary weights and sparse activations, while preserving the ability to train the network using standard deep learning techniques.
+
+\subsubsection{Spike-Based Aggregation and Classification}
+
+After the final spiking layer produces its output, the resulting spike activity must be aggregated to generate a classification decision. Unlike conventional neural networks, where outputs are typically continuous values, the proposed SNN produces binary spike events over time. Therefore, a dedicated aggregation mechanism is required to convert temporal spike patterns into class predictions.
+
+Let $\mathbf{Z} \in \{0,1\}^{T \times N}$ denote the output spike matrix of the final layer, where $T$ is the number of time steps (ticks) and $N$ is the number of neurons. The first step of aggregation is to accumulate spike activity over time:
+
+\[
+\mathbf{s} = \sum_{t=1}^{T} \mathbf{Z}_t
+\]
+
+where $\mathbf{s} \in \mathbb{R}^{N}$ represents the total spike count of each neuron.
+
+The neurons are organized into groups corresponding to different classes. Specifically, the $N$ neurons are evenly divided into $K$ groups, where $K$ is the number of classes. Each group contains $\frac{N}{K}$ neurons, and each neuron contributes to the prediction of a specific class.
+
+The class-wise aggregation is then computed by summing the spike counts within each group:
+
+\[
+y_k = \sum_{i \in \mathcal{G}_k} s_i, \quad k = 1, \dots, K
+\]
+
+where $\mathcal{G}_k$ denotes the set of neuron indices associated with class $k$. The resulting vector $\mathbf{y} \in \mathbb{R}^{K}$ represents the aggregated evidence for each class.
+
+Optionally, a normalization step can be applied to scale the outputs and stabilize the prediction values. Finally, the class probabilities are obtained using a softmax function:
+
+\[
+\hat{\mathbf{y}} = \text{softmax}(\mathbf{y})
+\]
+
+This additive pooling mechanism effectively transforms distributed spiking activity into a compact and interpretable classification output. By aggregating spikes both temporally and across neuron groups, the model leverages the collective behavior of neurons to make robust predictions.
 
 \subsubsection{Output Layer}
 
@@ -39,7 +166,6 @@ Overall, the proposed architecture provides a balance between computational effi
 \subsection{Design Rationale and Advantages}
 
 \subsection{Summary}
-\section{Spiking Neural Network based on RANC Architecture}
 \section{Spiking Vision Transformer (Spiking ViT)}
 
 \end{document}
