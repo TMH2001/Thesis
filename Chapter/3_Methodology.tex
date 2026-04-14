@@ -18,6 +18,8 @@ Overall, the proposed architecture provides a balance between computational effi
 
 \subsection{Input Encoding Scheme}
 
+To enable processing of static capacitive images within the spiking domain, the input is converted into spike trains using a burst encoding scheme. In this approach, each pixel intensity is represented by a short burst of spikes, where stronger intensities generate a higher number of spikes within a fixed temporal window. This encoding allows the model to capture both the magnitude and temporal characteristics of the input while remaining compatible with event-driven neuromorphic computation.
+
 \subsection{Network Architecture Design}
 
 \subsubsection{Input Representation}
