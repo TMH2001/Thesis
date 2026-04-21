@@ -3,13 +3,12 @@
 Touchscreen interaction is widely used in modern mobile devices, yet it is typically limited to two-dimensional touch inputs, restricting richer interaction capabilities. Recent studies have explored the use of capacitive images to identify which finger interacts with the screen, with the CapFingerId dataset providing a large-scale benchmark for this task. While convolutional neural networks (CNNs) achieve high classification accuracy, they often require significant computational resources. This thesis therefore investigates energy-efficient alternatives using Spiking Neural Networks (SNNs), including a model developed on the RANC framework with potential for FPGA deployment, although hardware implementation is beyond the scope of this work. In addition, a SpikeFormer-based SNN Vision Transformer is explored, leveraging direct training and strong representation learning capabilities instead of ANN-to-SNN conversion. This chapter presents the problem context, reviews related works, and introduces the necessary theoretical background.
 
 \section{Scope of Research}
-\subsection{Problem Definition}
-\subsubsection{Task Description}
+\subsection{Task Description}
 This thesis addresses the problem of classifying capacitive fingerprint images collected from touchscreen devices. Unlike traditional input modalities that only capture 2D touch locations, capacitive sensing enables the acquisition of low-resolution fingerprint-like images, which contain distinctive patterns related to different fingers. The CapFingerId \cite{CapfingerId} dataset provides a large-scale collection of such images, comprising various finger combinations, particularly focusing on commonly used fingers such as the thumb and index finger.
 
 However, capacitive images present several challenges compared to conventional optical fingerprint images. Specifically, they are characterized by low resolution, high noise levels, and significant variations in touch position and pressure. Furthermore, the task requires the model to learn position-invariant features in order to robustly distinguish between different fingers under varying interaction conditions. These characteristics make the classification problem non-trivial and motivate the need for robust and efficient learning approaches.
 
-\subsubsection{Problem Formulation}
+\subsection{Problem Formulation}
 Formally, let the dataset be defined as:
 \begin{equation}
 D = \{(x_i, y_i)\}_{i=1}^{N}
@@ -20,10 +19,10 @@ f(x; \theta) \rightarrow y
 \end{equation}
 where $\theta$ denotes the model parameters. The model is trained to minimize the cross-entropy loss for classification.
 
-\subsubsection{Evaluation Metrics}
+\subsection{Evaluation Metrics}
 The primary evaluation metric is classification accuracy. Additional metrics such as precision, recall, and F1-score may also be considered to provide a more comprehensive evaluation of model performance.
 
-\subsubsection{Constraints and Research Gap}
+\subsection{Constraints and Research Gap}
 While convolutional neural networks (CNNs) have demonstrated strong performance on similar tasks, they often require significant computational resources. In contrast, Spiking Neural Networks (SNNs) offer a more energy-efficient alternative but remain underexplored for capacitive fingerprint classification. Furthermore, the application of transformer-based models within the SNN paradigm is still limited. These challenges motivate the development of efficient and accurate models in this thesis.
 
 \section{Related Works}
@@ -104,11 +103,11 @@ The dataset is labeled for all ten fingers, enabling various classification scen
     \label{fig:dataset_samples}
 \end{figure}
 
-\section{Spiking Neural Networks (SNN)}
+\subsection{Spiking Neural Networks (SNN)}
 
 Spiking Neural Networks (SNNs) represent the third generation of neural network models, inspired by the dynamics of biological neurons. Unlike conventional artificial neural networks (ANNs) that process continuous values, SNNs operate using discrete spike events over time. This event-driven mechanism allows computations to occur only when spikes are present, leading to significantly reduced energy consumption. As a result, SNNs have emerged as a promising approach for energy-efficient computing, particularly in edge devices and neuromorphic hardware systems.
 
-\subsection{Neuron Model}
+\subsubsection{Neuron Model}
 
 A fundamental component of SNNs is the spiking neuron model. In this work, the Leaky Integrate-and-Fire (LIF) neuron is adopted due to its simplicity and effectiveness. The membrane potential of a neuron accumulates incoming spikes over time and decays gradually. When the membrane potential exceeds a predefined threshold, the neuron emits a spike and resets its state. This behavior can be described as:
 
@@ -118,7 +117,7 @@ A fundamental component of SNNs is the spiking neuron model. In this work, the L
 
 where $V(t)$ is the membrane potential, $I(t)$ is the input current, and $\tau$ is the membrane time constant.
 
-\subsection{Spike Encoding}
+\subsubsection{Spike Encoding}
 
 To process static image data within the SNN framework, it is necessary to convert input images into spike trains. In this work, \textit{burst coding} is adopted as the primary encoding scheme. Unlike traditional rate coding, burst coding represents input intensity using short bursts of spikes, where both the number of spikes within a burst and their temporal spacing carry information. Stronger input signals typically generate bursts with higher spike counts and shorter inter-spike intervals. This encoding strategy enables richer temporal dynamics while maintaining relatively low latency.
 
@@ -135,13 +134,13 @@ Another related approach is \textit{latency coding}, where input intensity is re
 Finally, \textit{event-based encoding} is commonly used in neuromorphic vision sensors, where spikes are generated only when changes in the input signal occur. Although highly efficient, it is less directly applicable to static image datasets such as CapFingerId \cite{gallego2020event}.
 
 Overall, burst coding is selected in this work due to its ability to capture both rate and temporal information, providing a balanced trade-off between accuracy, latency, and energy efficiency for static image-based SNN applications.
-\subsection{Training Methods}
+\subsubsection{Training Methods}
 
 Training SNNs remains a challenging problem due to the non-differentiable nature of spike generation. Two primary approaches have been proposed in the literature. The first approach is ANN-to-SNN conversion, where a pre-trained ANN is converted into an equivalent SNN by mapping activation values to firing rates. While this method preserves accuracy, it often introduces latency due to the need for long simulation time steps.
 
 The second approach is direct training, which applies backpropagation techniques to SNNs using surrogate gradients to approximate the non-differentiable spike function. This method enables end-to-end learning and has shown promising results in recent studies. In this thesis, direct training is particularly relevant for advanced architectures such as SNN-based Vision Transformers.
 
-\subsection{Advantages and Challenges}
+\subsubsection{Advantages and Challenges}
 
 SNNs offer several advantages over traditional neural networks. Their event-driven nature enables sparse computation, resulting in lower power consumption and improved efficiency, especially when deployed on neuromorphic hardware. However, SNNs also present several challenges, including difficulties in training, sensitivity to encoding schemes, and potential performance gaps compared to conventional CNNs.
 
