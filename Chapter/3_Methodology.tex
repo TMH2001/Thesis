@@ -199,17 +199,16 @@ To improve generalization performance, dropout is applied after each Tea layer w
 
 The design of the proposed SNN architecture is guided by several key considerations to balance recognition performance and computational efficiency.
 
-First, the use of \textit{overlapping segmentation} combined with parallel processing enables efficient feature extraction from localized regions of the input. By dividing the input into multiple segments and processing them simultaneously, the model reduces effective computation time while preserving important spatial information across segment boundaries.
+First, the use of \textit{overlapping segmentation} combined with parallel processing enables efficient feature extraction from localized regions of the input. By dividing the input into multiple segments and processing them simultaneously, the model reduces effective computation time while preserving important spatial information across segment boundaries. The choice of segmentation parameters, including the segment size (\textit{Elems}) and the degree of overlap (\textit{Overlap}), plays a crucial role in this design. A moderate segment size allows the model to focus on meaningful local patterns, while overlapping segments ensure continuity of spatial information and improve robustness to noise and variations in the input.
 
-Second, the adoption of \textit{Tea layers} allows the network to operate with binary synaptic weights and discretized connections, making it suitable for neuromorphic implementations. This design reduces computational complexity and enables efficient simulation of spiking behavior while maintaining trainability.
+Second, the adoption of \textit{Tea layers} allows the network to operate with binary synaptic weights and discretized connections, making it suitable for neuromorphic implementations. This design reduces computational complexity and enables efficient simulation of spiking behavior while maintaining trainability. In addition, the number of output neurons in each Tea layer (\textit{Tea Out}) determines the representational capacity of the network, providing a balance between expressive power and computational cost.
 
 Third, the hierarchical structure of the network, consisting of \textit{parallel feature extraction} followed by global aggregation, enables the model to capture both local and global patterns. This improves the discriminative capability of the network for fingerprint recognition tasks.
 
 Finally, the use of \textit{Additive Pooling} for output aggregation provides a robust mechanism for decision making based on spike activity. By aggregating neuron responses over time and across groups, the model leverages collective spiking behavior to produce stable and reliable predictions.
 
-Overall, these design choices contribute to an efficient and effective SNN architecture tailored for capacitive fingerprint recognition.
+Overall, these design choices, together with carefully selected architectural parameters, contribute to an efficient and effective SNN architecture tailored for capacitive fingerprint recognition. The effects of these architectural parameters on model performance are further investigated in Chapter 4.
 
-\subsection{Summary}
 \section{Spiking Vision Transformer (Spiking ViT)}
 
 \end{document}
