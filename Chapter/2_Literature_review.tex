@@ -20,7 +20,43 @@ f(x; \theta) \rightarrow y
 where $\theta$ denotes the model parameters. The model is trained to minimize the cross-entropy loss for classification.
 
 \subsection{Evaluation Metrics}
-The primary evaluation metric is classification accuracy. Additional metrics such as precision, recall, and F1-score may also be considered to provide a more comprehensive evaluation of model performance.
+
+To comprehensively evaluate model performance, multiple classification metrics are employed, including accuracy, precision, recall, and F1-score.
+
+\textbf{Accuracy} measures the overall proportion of correctly classified samples:
+\[
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\]
+where $TP$, $TN$, $FP$, and $FN$ denote true positives, true negatives, false positives, and false negatives, respectively. While accuracy provides a general performance overview, it may be misleading in imbalanced datasets.
+
+\textbf{Precision} evaluates the reliability of positive predictions:
+\[
+\text{Precision} = \frac{TP}{TP + FP}
+\]
+A high precision indicates that when the model predicts a certain finger class, it is likely to be correct.
+
+\textbf{Recall} (or sensitivity) measures the model's ability to correctly identify all relevant samples:
+\[
+\text{Recall} = \frac{TP}{TP + FN}
+\]
+A high recall implies that the model successfully captures most instances of a given finger class, even if some predictions may be incorrect.
+
+\textbf{F1-score} provides a balanced measure by combining precision and recall:
+\[
+\text{F1-score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\]
+This metric is particularly useful when there is a trade-off between precision and recall.
+
+\textbf{Interpretation of metric trade-offs:}
+Different combinations of these metrics reveal distinct model behaviors:
+\begin{itemize}
+    \item High accuracy but low precision/recall: the model may be biased toward dominant classes and fails to generalize well to minority classes.
+    \item High precision but low recall: the model is conservative in making predictions, producing fewer false positives but missing many true instances (under-detection).
+    \item High recall but low precision: the model detects most true instances but at the cost of many false positives (over-detection).
+    \item Balanced precision and recall (high F1-score): the model achieves a good trade-off between correctness and completeness.
+\end{itemize}
+
+In the context of finger-type classification, these trade-offs are critical. For example, a model with high recall ensures that most finger types are correctly detected, while high precision guarantees that predicted finger labels are reliable. Therefore, the F1-score is used as a key complementary metric to accuracy in order to reflect overall classification robustness.
 
 \subsection{Constraints and Research Gap}
 While convolutional neural networks (CNNs) have demonstrated strong performance on similar tasks, they often require significant computational resources. In contrast, Spiking Neural Networks (SNNs) offer a more energy-efficient alternative but remain underexplored for capacitive fingerprint classification. Furthermore, the application of transformer-based models within the SNN paradigm is still limited. These challenges motivate the development of efficient and accurate models in this thesis.

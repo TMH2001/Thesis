@@ -43,7 +43,7 @@ This study aims to develop energy-efficient deep learning models for capacitive 
 The primary objectives of this thesis are as follows:
 
 \begin{enumerate}[label=\Roman*.]
-    \item \textbf{To explore and exploit the CapfingerId dataset effectively}: The CapfingerId dataset presents unique challenges due to its capacitive sensing nature, including noise, variability, and limited data diversity. This work aims to propose suitable data preprocessing, augmentation, and feature extraction methods to enhance the quality and usability of the dataset for deep learning models.
+    % \item \textbf{To explore and exploit the CapfingerId dataset effectively}: The CapfingerId dataset presents unique challenges due to its capacitive sensing nature, including noise, variability, and limited data diversity. This work aims to propose suitable data preprocessing, augmentation, and feature extraction methods to enhance the quality and usability of the dataset for deep learning models.
     \item \textbf{To develop a Convolutional Neural Network (CNN) for fingerprint recognition}: A baseline CNN architecture will be designed and optimized to address the fingerprint recognition problem. This model serves as a performance benchmark in terms of accuracy and computational cost.
     \item \textbf{To design a Spiking Neural Network (SNN) based on the RANC framework}: The model is constructed by following the structural principles and design guidelines suggested in RANC, ensuring consistency in the implementation and evaluation of all SNN-based approaches in this work.
     \item \textbf{To extend Vision Transformer (ViT) architectures to the spiking domain
@@ -53,7 +53,7 @@ The primary objectives of this thesis are as follows:
 \section{Contributions}
 This thesis makes the following main contributions:
 \begin{enumerate}[label=\Roman*.]
-    \item A data processing pipeline for the CapfingerId dataset.
+    % \item A data processing pipeline for the CapfingerId dataset.
     \item A CNN-based baseline model for fingerprint recognition.
     \item A SNN model based on the RANC framework.
     \item A Spiking Vision Transformer.
@@ -64,8 +64,8 @@ The remainder of this thesis is organized as follows.
 
 Chapter 2 presents the problem context and fundamental background knowledge relevant to this thesis. It begins by defining the scope of the research to clarify the problem setting and objectives. This chapter also introduces the CapfingerId dataset, which serves as the primary dataset used throughout this thesis, along with its characteristics and associated challenges. Furthermore, the theoretical foundations of Convolutional Neural Networks (CNNs) and Transformer-based models are presented, focusing on their roles in feature extraction and representation learning. In addition, an overview of Spiking Neural Networks (SNNs) is provided, emphasizing their computational principles and advantages in energy-efficient processing. Finally, the chapter introduces the RANC framework, which is adopted as the main framework for designing and implementing SNN models throughout this thesis.
 
-Chapter 3 presents the main methodologies of this thesis. Specifically, it first introduces several methods for processing and exploiting the CapfingerId dataset. Next, a Convolutional Neural Network (CNN) is designed based on the original reference model, alongside a Spiking Neural Network (SNN) developed using the RANC framework. Finally, this chapter explores existing studies and technical reports to design a Spiking Vision Transformer (SNN-ViT), aiming to integrate transformer-based architectures into the spiking domain.
-
+% Chapter 3 presents the main methodologies of this thesis. Specifically, it first introduces several methods for processing and exploiting the CapfingerId dataset. Next, a Convolutional Neural Network (CNN) is designed based on the original reference model, alongside a Spiking Neural Network (SNN) developed using the RANC framework. Finally, this chapter explores existing studies and technical reports to design a Spiking Vision Transformer (SNN-ViT), aiming to integrate transformer-based architectures into the spiking domain.
+Chapter 3 presents the core methodologies of this thesis, with an emphasis on model architecture design. A baseline Convolutional Neural Network (CNN) is first established as a reference, followed by the formulation of a Spiking Neural Network (SNN) within the RANC framework to leverage event-driven computation. The chapter then extends this design space by incorporating transformer-based global attention through a Spiking Vision Transformer (SNN-ViT). This unified framework enables a direct and consistent evaluation of CNN, SNN, and spiking transformer architectures.
 Chapter 4 presents the experimental evaluation, including quantitative analyses to compare the performance of different models. Specifically, this chapter focuses on assessing and comparing the effectiveness of CNN, SNN, and SNN-ViT models in terms of accuracy and energy efficiency.
 
 Chapter 5 concludes the thesis by summarizing the main findings and discussing the achieved results. It also provides insights into the limitations of the current work and proposes directions for future research. In particular, future work will emphasize the deployment of Spiking Neural Network (SNN) models on hardware platforms to fully exploit their potential for energy-efficient computation.
