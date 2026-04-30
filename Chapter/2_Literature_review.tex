@@ -281,5 +281,28 @@ Despite these advantages, Vision Transformers also present several limitations. 
 
 In the context of capacitive fingerprint recognition, the ability of ViTs to model global relationships is particularly beneficial. Capacitive images are characterized by low resolution, high noise levels, and significant variability in touch position and pressure, making it difficult for purely local feature extractors to capture discriminative patterns. By leveraging self-attention, ViTs can integrate information across the entire spatial domain, potentially improving robustness and classification accuracy. Nevertheless, the high energy consumption of conventional ViTs motivates the exploration of more efficient architectures. This leads to the investigation of Spiking Neural Network-based Vision Transformers (SNN-ViT), which aim to combine the representational power of Transformers with the energy efficiency of event-driven computation.
 
+\subsection{SNN-ViT}
+Recent advances in neuromorphic computing have motivated the integration of Transformer architectures into the spiking domain, leading to the emergence of Spiking Vision Transformers (SNN-ViTs). These models aim to combine the global representation capability of Vision Transformers (ViTs) with the energy efficiency of Spiking Neural Networks (SNNs).
 
+Unlike conventional ViTs, which operate on continuous-valued activations, SNN-ViTs process information through discrete spike events over time. This requires redesigning key Transformer components—including patch embedding, self-attention, and feed-forward layers—to be compatible with spike-based computation.
+
+Several approaches have been proposed in the literature to bridge the gap between Vision Transformers and Spiking Neural Networks. One early direction focuses on ANN-to-SNN conversion for Transformer architectures, where a pre-trained Vision Transformer is transformed into a spiking equivalent by mapping continuous activations to firing rates. While this approach benefits from leveraging well-optimized ANN models, it inherits several limitations commonly observed in CNN-to-SNN conversion \cite{diehl2015unsupervised, pfeiffer2018deep}. In particular, the reliance on rate-based encoding often leads to long inference latency due to the need for multiple simulation time steps. Moreover, the complex structure of self-attention mechanisms introduces additional challenges, resulting in potential accuracy degradation when approximated in the spiking domain.
+
+To overcome these limitations, more recent studies have shifted toward directly trained spiking Transformers, where models are trained end-to-end using surrogate gradient methods \cite{neftci2019surrogate}. This paradigm enables the network to learn spike-based representations natively, without relying on intermediate ANN formulations. A representative example is SpikeFormer, which introduces a fully spike-driven Transformer architecture by replacing conventional activation functions with spiking neurons while preserving the overall Transformer structure \cite{zhou2023spikeformer}. Such approaches have demonstrated competitive performance on standard benchmarks, while significantly improving energy efficiency due to their event-driven computation.
+
+In addition to these methods, hybrid architectures have been proposed to further balance efficiency and representational power. For instance, models such as SpikeAtConv \cite{SpikeAtConv} integrate convolutional layers with spiking attention mechanisms, allowing the network to capture both local spatial features and global contextual relationships. By combining the strengths of convolution and attention, these hybrid designs aim to reduce the computational overhead associated with pure Transformer-based models while maintaining strong feature extraction capability.
+
+Despite these advancements, existing SNN-ViT approaches are predominantly evaluated on high-resolution datasets such as ImageNet \cite{ImageNet}, where abundant spatial information is available. Consequently, their effectiveness on low-resolution and noisy data—such as capacitive fingerprint images—remains largely unexplored. This limitation highlights an important research gap in the current literature.
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{Figure/ssa.pdf}
+    \caption{ Illustration of vanilla self-attention (VSA)\cite{dosovitskiy2021imageworth16x16words} and Spiking Self Attention (SSA)\cite{zhou2023spikeformer}}
+    \vspace{-12pt}
+    \label{fig:Spiking-Self-Attention}
+\end{figure}
+
+To address this gap, this thesis adopts a SpikeFormer-based Spiking Vision Transformer as the core architecture for the CapFingerId task. Specifically, the proposed model largely follows the original SpikeFormer design \cite{zhou2023spikeformer}, while introducing task-specific adaptations to better suit low-resolution capacitive data. In particular, the number of Spiking Transformer encoder blocks and the feature embedding dimensions are carefully adjusted to balance representational capacity and computational efficiency under resource-constrained settings.
+
+By retaining the core spike-driven self-attention mechanism and direct training strategy with surrogate gradients, the model preserves the advantages of SpikeFormer in capturing global dependencies. At the same time, the architectural scaling enables more efficient processing of small, noisy inputs, making it more suitable for capacitive fingerprint classification. This design choice allows the thesis to focus on evaluating the applicability and effectiveness of Spiking Vision Transformers in a new problem domain, rather than proposing a fundamentally new architecture.
 \end{document}
