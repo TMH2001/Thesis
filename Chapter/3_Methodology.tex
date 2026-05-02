@@ -4,6 +4,8 @@
 % \section{Dataset Processing and Baseline CNN Model}
 
 \section{Spiking Neural Network based on RANC Architecture}
+\label{sec:RANC-based-Spiking-Neural-Network}
+
 \subsection{Design Overview}
 
 This section presents the overall design of the proposed Spiking Neural Network (SNN) for capacitive image-based fingerprint recognition. The model is developed to exploit the event-driven nature of spiking computation while maintaining competitive recognition performance compared to conventional deep learning approaches.
@@ -210,5 +212,58 @@ Finally, the use of \textit{Additive Pooling} for output aggregation provides a 
 Overall, these design choices, together with carefully selected architectural parameters, contribute to an efficient and effective SNN architecture tailored for capacitive fingerprint recognition. The effects of these architectural parameters on model performance are further investigated in Chapter 4.
 
 \section{Spiking Vision Transformer (Spiking ViT)}
+While the RANC-based Spiking Neural Network in Section \ref{sec:RANC-based-Spiking-Neural-Network} efficiently captures local spatio-temporal features through event-driven computation, it lacks an explicit mechanism to model global dependencies across the input space \cite{RANC}. This limitation is particularly critical for capacitive fingerprint images, where discriminative patterns are often spatially distributed and affected by noise and variability \cite{CapfingerId}. Vision Transformers address this issue via self-attention mechanisms, but their high computational cost limits their applicability in resource-constrained environments \cite{dosovitskiy2021imageworth16x16words}. To overcome these challenges, this work adopts the SpikeFormer architecture, which integrates self-attention into the spiking domain to enable global feature modeling while maintaining energy efficiency \cite{zhou2023spikeformer}.
 
+\subsection{Overview of SpikeFormer Architecture}
+
+The overall architecture of SpikeFormer follows a Transformer-style pipeline adapted to spike-based computation \cite{zhou2023spikeformer}. Given an input spatio-temporal representation $I \in \mathbb{R}^{T \times C \times H \times W}$, where $T$, $C$, $H$, and $W$ denote the number of time steps, channels, height, and width respectively, the model processes the data through a sequence of spike-driven modules to produce the final prediction.
+
+First, the input is passed through a Spiking Patch Splitting (SPS) module, which projects the input into a $D$-dimensional embedding space and partitions it into a sequence of $N$ spike-form patches:
+\begin{align}
+x = \mathrm{SPS}(I), \quad x \in \mathbb{R}^{T \times N \times D}.
+\end{align}
+
+To incorporate positional information in the absence of continuous-valued embeddings, SpikeFormer employs a conditional relative position encoding mechanism. Specifically, a convolutional layer followed by batch normalization and a spiking neuron layer is used to generate spike-form relative positional embeddings (RPE):
+\begin{align}
+\mathrm{RPE} = \mathcal{SN}(\mathrm{BN}(\mathrm{Conv2d}(x))), \quad \mathrm{RPE} \in \mathbb{R}^{T \times N \times D}.
+\end{align}
+The positional information is then added to the patch embeddings:
+\begin{align}
+X_0 = x + \mathrm{RPE}.
+\end{align}
+
+The resulting sequence is processed by a stack of $L$ SpikeFormer encoder blocks. Each block consists of a Spiking Self-Attention (SSA) module followed by a spiking multi-layer perceptron (MLP), both equipped with residual connections:
+\begin{align}
+X'_l &= \mathrm{SSA}(X_{l-1}) + X_{l-1}, \\
+X_l &= \mathrm{MLP}(X'_l) + X'_l, \quad l = 1, \dots, L.
+\end{align}
+
+Unlike conventional self-attention, the SSA module operates directly on spike-form Query, Key, and Value representations without relying on softmax normalization, enabling efficient event-driven computation.
+
+Finally, a global average pooling (GAP) layer aggregates the spatio-temporal features, and the resulting representation is fed into a fully connected classification head to produce the output prediction:
+\begin{align}
+Y = \mathrm{CH}(\mathrm{GAP}(X_L)).
+\end{align}
+
+By combining spike-based patch embedding, efficient spiking self-attention, and hierarchical feature processing, SpikeFormer preserves the representational power of Transformers while significantly improving computational efficiency in spiking neural network settings.
+
+\subsection{Spiking Patch Splitting (SPS)} \label{sec:patch_transformer}
+
+The Spiking Patch Splitting (SPS) module is responsible for transforming the input spike-based image representation into a sequence of embedded patches suitable for Transformer processing \cite{zhou2023spikeformer}. Given an input tensor $I \in \mathbb{R}^{T \times C \times H \times W}$, SPS projects the input into a $D$-dimensional spike-form feature space while simultaneously partitioning it into patch tokens.
+
+Each SPS block consists of a sequence of operations including a 2D convolution layer, batch normalization, a spiking neuron activation, and a max-pooling layer:
+\begin{align}
+x = \mathscr{MP}\left(\mathcal{SN}(\mathrm{BN}(\mathrm{Conv2d}(I)))\right),
+\end{align}
+where $\mathrm{Conv2d}$ denotes a convolutional layer with kernel size $3 \times 3$ and stride 1, $\mathrm{BN}$ represents batch normalization, $\mathcal{SN}$ is the spiking neuron function, and $\mathscr{MP}$ denotes max-pooling for spatial downsampling.
+
+In this work, the spiking neuron function $\mathcal{SN}$ is implemented using a multi-step Leaky Integrate-and-Fire (LIF) model, specifically the \texttt{MultiStepLIFNode} provided by the SpikingJelly \cite{SpikingJelly} framework, which integrates input signals over time and generates binary spike outputs in a vectorized manner.
+
+Similar to the convolutional stem in Vision Transformers \cite{xiao2021early,hassani2021escaping}, the inclusion of convolutional layers introduces inductive bias into the model, improving its ability to capture local spatial structures. Multiple SPS blocks can be stacked to progressively refine feature representations. In such cases, the number of output channels is gradually increased across blocks to match the desired embedding dimension $D$. For example, with a four-block SPS design, the channel dimensions can be configured as $D/8$, $D/4$, $D/2$, and $D$, respectively.
+
+After passing through the SPS module, the input is transformed into a sequence of $N$ spike-form patches:
+\begin{align}
+x \in \mathbb{R}^{T \times N \times D},
+\end{align}
+which serves as the input to the subsequent Spiking Transformer encoder. This design enables efficient feature extraction while preserving compatibility with spike-based computation.
 \end{document}

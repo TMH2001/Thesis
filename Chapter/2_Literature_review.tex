@@ -170,11 +170,27 @@ Another related approach is \textit{latency coding}, where input intensity is re
 Finally, \textit{event-based encoding} is commonly used in neuromorphic vision sensors, where spikes are generated only when changes in the input signal occur. Although highly efficient, it is less directly applicable to static image datasets such as CapFingerId \cite{gallego2020event}.
 
 Overall, burst coding is selected in this work due to its ability to capture both rate and temporal information, providing a balanced trade-off between accuracy, latency, and energy efficiency for static image-based SNN applications.
+
+\subsubsection{Comparison of Spiking Neuron Models}
+
+Various spiking neuron models have been proposed in the literature, each offering different trade-offs between biological realism, computational efficiency, and suitability for deep learning.
+
+The \textbf{Integrate-and-Fire (LIF) model} is the simplest formulation, in which the membrane potential accumulates incoming inputs without any leakage mechanism. Its main advantage lies in its computational efficiency and ease of implementation. However, the absence of a decay term makes it less biologically plausible and can lead to unbounded accumulation of membrane potential, which may negatively affect network stability \cite{Gerstner_Kistler_2002}.
+
+The Leaky \textbf{Integrate-and-Fire (LIF) model} extends IF by incorporating a leakage term that gradually decays the membrane potential over time. This simple yet effective modification significantly improves temporal dynamics while maintaining low computational cost. As a result, LIF achieves a favorable balance between biological plausibility and efficiency, making it one of the most widely adopted neuron models in modern SNN research \cite{Gerstner_Kistler_2002, neftci2019surrogate}. Furthermore, LIF neurons integrate naturally with surrogate gradient methods, enabling stable end-to-end training in deep spiking networks \cite{neftci2019surrogate}.
+
+More advanced variants such as the \textbf{Parametric LIF (PLIF)} introduce learnable parameters, such as the membrane time constant, allowing the neuron to adapt its temporal dynamics during training. This flexibility can improve performance across different tasks and network depths, but comes at the cost of increased model complexity and additional training overhead \cite{fang2021incorporating}.
+
+Similarly, the \textbf{Adaptive LIF (ALIF) model} incorporates dynamic threshold modulation to simulate neuronal adaptation. This enables better modeling of long-term temporal dependencies, but also increases computational complexity and may complicate optimization \cite{bellec2018long}.
+
+At the other end of the spectrum, biologically detailed models such as the \textbf{Izhikevich and Hodgkin--Huxley neurons} provide highly accurate representations of neuronal behavior. These models are capable of reproducing a wide range of spiking patterns observed in biological systems. However, their high computational cost and complex dynamics make them impractical for large-scale deep learning applications, particularly in vision-based tasks \cite{izhikevich2003simple, hodgkin1952quantitative}.
+
+Considering the trade-offs discussed above, the \textbf{Leaky Integrate-and-Fire (LIF) neuron} is adopted in this work due to its balance between computational efficiency and temporal modeling capability. Its simple formulation enables efficient implementation and stable training using surrogate gradient methods, which is crucial for large-scale deep SNN architectures. While more advanced neuron models offer greater expressiveness, they often introduce unnecessary complexity for the scope of this study. Therefore, LIF is selected to ensure scalability and efficiency, with further exploration of more sophisticated neuron dynamics left for future work.
 \subsubsection{Training Methods}
 
-Training SNNs remains a challenging problem due to the non-differentiable nature of spike generation. Two primary approaches have been proposed in the literature. The first approach is ANN-to-SNN conversion, where a pre-trained ANN is converted into an equivalent SNN by mapping activation values to firing rates. While this method preserves accuracy, it often introduces latency due to the need for long simulation time steps.
+% Training SNNs remains a challenging problem due to the non-differentiable nature of spike generation. Two primary approaches have been proposed in the literature. The first approach is ANN-to-SNN conversion, where a pre-trained ANN is converted into an equivalent SNN by mapping activation values to firing rates. While this method preserves accuracy, it often introduces latency due to the need for long simulation time steps.
 
-The second approach is direct training, which applies backpropagation techniques to SNNs using surrogate gradients to approximate the non-differentiable spike function. This method enables end-to-end learning and has shown promising results in recent studies. In this thesis, direct training is particularly relevant for advanced architectures such as SNN-based Vision Transformers.
+% The second approach is direct training, which applies backpropagation techniques to SNNs using surrogate gradients to approximate the non-differentiable spike function. This method enables end-to-end learning and has shown promising results in recent studies. In this thesis, direct training is particularly relevant for advanced architectures such as SNN-based Vision Transformers.
 
 \subsubsection{Advantages and Challenges}
 
@@ -281,7 +297,7 @@ Despite these advantages, Vision Transformers also present several limitations. 
 
 In the context of capacitive fingerprint recognition, the ability of ViTs to model global relationships is particularly beneficial. Capacitive images are characterized by low resolution, high noise levels, and significant variability in touch position and pressure, making it difficult for purely local feature extractors to capture discriminative patterns. By leveraging self-attention, ViTs can integrate information across the entire spatial domain, potentially improving robustness and classification accuracy. Nevertheless, the high energy consumption of conventional ViTs motivates the exploration of more efficient architectures. This leads to the investigation of Spiking Neural Network-based Vision Transformers (SNN-ViT), which aim to combine the representational power of Transformers with the energy efficiency of event-driven computation.
 
-\subsection{SNN-ViT}
+\subsubsection{SNN-ViT}
 Recent advances in neuromorphic computing have motivated the integration of Transformer architectures into the spiking domain, leading to the emergence of Spiking Vision Transformers (SNN-ViTs). These models aim to combine the global representation capability of Vision Transformers (ViTs) with the energy efficiency of Spiking Neural Networks (SNNs).
 
 Unlike conventional ViTs, which operate on continuous-valued activations, SNN-ViTs process information through discrete spike events over time. This requires redesigning key Transformer components—including patch embedding, self-attention, and feed-forward layers—to be compatible with spike-based computation.
