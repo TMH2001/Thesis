@@ -162,7 +162,6 @@ This additive pooling mechanism effectively transforms distributed spiking activ
     \centering
     \includegraphics[width=0.5\textwidth]{Figure/model_architecture.drawio.png}
     \caption{RANC-based SNN Model architecture}
-    \label{fig:my_image}
 \end{figure}
 
 The performance and efficiency of the proposed SNN architecture are influenced by several key design parameters, including the segment size (\textit{Elems}), the overlap between segments (\textit{Overlap}), and the number of output neurons in each Tea layer (\textit{Tea Out}). The configuration of these parameters follows the settings reported in Table~1 of the original work, which provide a suitable balance between recognition accuracy and computational cost.
@@ -247,6 +246,12 @@ Y = \mathrm{CH}(\mathrm{GAP}(X_L)).
 
 By combining spike-based patch embedding, efficient spiking self-attention, and hierarchical feature processing, SpikeFormer preserves the representational power of Transformers while significantly improving computational efficiency in spiking neural network settings.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{Figure/overview.pdf}
+    \caption{Overview of SpikeFormer architecture. The model consists of a Spiking Patch Splitting (SPS) module for input embedding, followed by a stack of SpikeFormer encoder blocks that utilize Spiking Self-Attention (SSA) and spiking MLPs. Finally, a global average pooling layer and classification head produce the output prediction.}
+\end{figure}
+
 \subsection{Spiking Patch Splitting (SPS)} \label{sec:patch_transformer}
 
 The Spiking Patch Splitting (SPS) module is responsible for transforming the input spike-based image representation into a sequence of embedded patches suitable for Transformer processing \cite{zhou2023spikeformer}. Given an input tensor $I \in \mathbb{R}^{T \times C \times H \times W}$, SPS projects the input into a $D$-dimensional spike-form feature space while simultaneously partitioning it into patch tokens.
@@ -266,4 +271,44 @@ After passing through the SPS module, the input is transformed into a sequence o
 x \in \mathbb{R}^{T \times N \times D},
 \end{align}
 which serves as the input to the subsequent Spiking Transformer encoder. This design enables efficient feature extraction while preserving compatibility with spike-based computation.
+
+\subsection{Spiking Self-Attention Mechanism}
+
+The conventional self-attention mechanism is highly effective in modeling global dependencies but relies on dense floating-point operations and softmax normalization, which are not well-suited for spiking neural networks. To address this limitation, this work adopts the Spiking Self-Attention (SSA) mechanism proposed in SpikeFormer \cite{zhou2023spikeformer}, which reformulates attention into a spike-driven computation paradigm.
+
+For completeness, the standard self-attention is defined as:
+\begin{align}
+\mathrm{Attention}(Q,K,V)=\mathrm{Softmax}\left(\frac{QK^T}{\sqrt{d}}\right)V,
+\end{align}
+where $Q$, $K$, and $V$ denote the query, key, and value representations.
+
+In the spiking formulation, the input feature $X$ is first projected into query, key, and value spaces using learnable weight matrices, followed by batch normalization and spiking neuron activation:
+\begin{align}
+Q = \mathcal{SN}_Q(\mathrm{BN}(XW_Q)), \quad 
+K = \mathcal{SN}_K(\mathrm{BN}(XW_K)), \quad 
+V = \mathcal{SN}_V(\mathrm{BN}(XW_V)),
+\end{align}
+where $Q, K, V \in \mathbb{R}^{T \times N \times D}$ are spike-based tensors consisting of binary values. The spiking neuron function $\mathcal{SN}$ is implemented using a multi-step Leaky Integrate-and-Fire (LIF) model, ensuring that the representations evolve over time and remain compatible with event-driven computation.
+
+Based on these spike-form representations, the attention operation is reformulated to operate directly on binary queries and keys. A scaling factor $s$ is introduced to stabilize the magnitude of the matrix multiplication, leading to the intermediate formulation:
+\begin{align}
+\mathrm{SSA}'(Q,K,V) = \mathcal{SN}\left(QK^{\mathrm{T}}V \cdot s\right).
+\end{align}
+The output is then further processed through a linear transformation and normalization:
+\begin{align}
+\mathrm{SSA}(Q,K,V) = \mathcal{SN}\left(\mathrm{BN}(\mathrm{Linear}(\mathrm{SSA}'(Q,K,V)))\right).
+\end{align}
+
+A key distinction from conventional self-attention is the removal of the softmax operation. In standard attention, softmax ensures that the attention map is non-negative and normalized. However, in the spiking formulation, both $Q$ and $K$ are binary and inherently non-negative, resulting in a non-negative attention map $QK^{\mathrm{T}}$ without requiring additional normalization. Consequently, SSA directly aggregates relevant spike-based features while suppressing irrelevant activations.
+
+Moreover, the use of softmax is not only unnecessary but also impractical for spiking neural networks due to its reliance on continuous exponential operations. Compared to conventional attention operating on dense floating-point representations, the spike-based formulation is more aligned with the sparse and discrete nature of spiking signals. Since both the input $X$ and the value $V$ are in spike form, containing limited information, the use of conventional attention may introduce redundancy. In contrast, SSA provides a more suitable mechanism for modeling such spike-based representations.
+
+Another important aspect of SSA is the incorporation of temporal dynamics. Specifically, all representations are defined over multiple time steps, i.e., $Q, K, V \in \mathbb{R}^{T \times N \times D}$. This allows the model to capture both spatial dependencies across patches and temporal patterns encoded in spike trains. A larger number of time steps $T$ enables richer temporal representation and potentially improves discriminative performance, but also increases computational cost and latency. Conversely, a smaller $T$ reduces computation and accelerates inference, at the expense of reduced temporal expressiveness. Therefore, selecting an appropriate value of $T$ is crucial to balance performance and efficiency.
+
+Within the SpikeFormer encoder, the SSA module is integrated with residual connections to stabilize training:
+\begin{align}
+X'_l = \mathrm{SSA}(X_{l-1}) + X_{l-1}.
+\end{align}
+
+Overall, the spiking self-attention mechanism preserves the global modeling capability of Transformers while adapting it to spike-based computation, making it more suitable for spiking neural networks and neuromorphic systems.
 \end{document}
