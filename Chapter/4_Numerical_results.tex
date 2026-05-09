@@ -47,21 +47,8 @@ Tea Out & 256 \\ \hline
 \end{tabular}
 \end{table}
 
-\subsubsection{Evaluation Metrics}
-
-The performance of the proposed architecture was evaluated primarily using classification accuracy. Accuracy measures the proportion of correctly classified fingerprint samples over the total number of evaluated samples and is defined as:
-
-\[
-\text{Accuracy} =
-\frac{N_{\text{correct}}}{N_{\text{total}}}
-\]
-
-where \(N_{\text{correct}}\) denotes the number of correctly predicted samples and \(N_{\text{total}}\) represents the total number of testing samples.
-
-In addition to classification accuracy, the number of trainable parameters was also reported to evaluate the computational complexity of different architectural configurations. Since the proposed SNN is intended for lightweight and resource-constrained neuromorphic systems, parameter efficiency is considered an important factor alongside recognition performance.
-
-The combination of these metrics enables analysis of the trade-off between model complexity and classification capability under different temporal encoding and segmentation configurations.
 \subsection{Effect of Parallel Segmentation Strategy}
+
 This experiment investigates the effect of the proposed parallel segmentation strategy on the performance of the RANC-based SNN architecture. In particular, the analysis focuses on two important segmentation parameters: the segment size (\textit{Elems}) and the overlap size (\textit{Overlap}). The experiments were conducted using a temporal encoding window of \(T=1\), corresponding to the binary spike encoding setting.
 
 The objective of this experiment is to evaluate how different segmentation configurations influence feature extraction capability, spatial continuity preservation, and model complexity. Different combinations of segment size and overlap were therefore explored while monitoring both classification performance and the number of trainable parameters.
@@ -108,19 +95,42 @@ Elems & Overlap & Tea Out & & & & & \\
 
 The experimental results demonstrate that the segmentation strategy has a significant impact on the recognition performance of the proposed architecture. In general, configurations with moderate segment sizes and overlapping regions achieved better validation accuracy and lower validation loss compared to configurations with either excessively small or excessively large segments.
 
-For configurations using a segment size of 16 with overlap 8, the model consistently achieved strong validation performance across different settings, reaching validation accuracies up to \(0.86\). This indicates that the selected segmentation strategy provides a suitable balance between local feature extraction and preservation of spatial continuity across neighboring segments.
+For configurations using a segment size of 16 with overlap 8, the model consistently achieved strong validation performance across different settings. Specifically, validation accuracy increased from \(0.80\) for \textit{Tea Out}=32 to \(0.84\), \(0.85\), and \(0.86\) for output dimensions of 64, 128, and 256, respectively. At the same time, validation loss decreased from \(0.49\) to \(0.38\), \(0.33\), and \(0.32\). These results indicate that the \((16,8)\) segmentation setting provides an effective balance between local feature extraction and preservation of spatial continuity across neighboring segments.
 
-In contrast, configurations using larger segment sizes with insufficient overlap, such as \((32, 8)\), tended to produce lower validation accuracy and significantly higher validation loss. This behavior suggests that reduced overlap may weaken the continuity of spatial information between adjacent regions, making it more difficult for the model to capture localized fingerprint patterns effectively.
+In contrast, configurations using larger segment sizes with insufficient overlap, such as \((32, 8)\), consistently produced lower validation performance. For example, validation accuracy reached only \(0.62\) when \textit{Tea Out}=32, with a high validation loss of \(0.88\). Even when increasing the representational capacity to \textit{Tea Out}=64 and 128, validation accuracy improved only to \(0.77\) and \(0.82\), respectively. This behavior suggests that reduced overlap weakens the continuity of spatial information between adjacent regions, limiting the model's ability to capture localized fingerprint patterns effectively.
 
-Similarly, configurations with very small segments and limited overlap also exhibited reduced performance in several cases. Although smaller segments allow more localized processing and increased parallelism, excessive fragmentation of the input may limit the amount of contextual information available to each processing branch.
+Similarly, configurations with very small segments and limited overlap also exhibited reduced performance in several cases. For the \((8,2)\) setting, validation accuracy ranged from \(0.79\) to \(0.84\) depending on the output dimension, while validation loss remained relatively high, reaching \(0.54\) for \textit{Tea Out}=32. Although smaller segments allow increased parallelism and localized processing, excessive fragmentation of the input appears to limit the contextual information available to each processing branch.
 
-The results further indicate that introducing overlap between neighboring segments plays an important role in improving robustness and classification stability. Overlapping regions enable adjacent branches to observe shared spatial patterns, reducing information loss near segment boundaries and improving the continuity of extracted features.
+The results further indicate that introducing overlap between neighboring segments plays an important role in improving robustness and classification stability. Comparing the \((8,2)\) and \((8,4)\) configurations demonstrates this effect clearly. When the overlap was increased from 2 to 4, validation accuracy improved from \(0.79\) to \(0.76\) for \textit{Tea Out}=32, from \(0.81\) to \(0.83\) for \textit{Tea Out}=64, and from \(0.82\) to \(0.85\) for \textit{Tea Out}=128. These improvements suggest that overlapping regions help preserve shared spatial patterns across adjacent segments and reduce information loss near segment boundaries.
 
-From a computational perspective, the segmentation strategy also affects the number of trainable parameters. Configurations with larger overlapping regions generally introduce higher model complexity due to the increased number of effective input connections. Therefore, the selection of segmentation parameters must consider the trade-off between recognition performance and computational efficiency.
+A similar trend can also be observed for larger segment sizes. For example, increasing overlap from 8 to 16 in the 32-element segmentation setting improved validation accuracy from \(0.77\) to \(0.81\) for \textit{Tea Out}=64, and from \(0.82\) to \(0.84\) for \textit{Tea Out}=128. This further confirms the importance of overlap in maintaining spatial continuity.
 
-Overall, the experimental results demonstrate that the proposed overlapping parallel segmentation strategy effectively improves feature extraction capability while maintaining a lightweight architecture. Among the evaluated configurations, the combination of moderate segment size and moderate overlap provides the most favorable balance between accuracy and model complexity.
+From a computational perspective, the segmentation strategy also affects the number of trainable parameters. Configurations with larger overlapping regions generally introduce higher model complexity due to the increased number of effective input connections. For instance, under \textit{Tea Out}=128, the parameter count increased from \(16640\) for \((32,8)\) to \(24960\) for \((32,16)\). Similarly, increasing overlap from 2 to 4 for the 8-element segmentation setting increased the parameter count from \(21760\) to \(32640\).
 
+Overall, the experimental results demonstrate that the proposed overlapping parallel segmentation strategy effectively improves feature extraction capability while maintaining a lightweight architecture. Among the evaluated configurations, moderate segment sizes with moderate overlap, particularly the \((16,8)\) setting, provide the most favorable balance between classification accuracy and computational complexity.
 \subsection{Effect of Tea Out}
+
+This experiment investigates the effect of the \textit{Tea Out} parameter on the performance of the proposed RANC-based SNN architecture. The \textit{Tea Out} parameter determines the number of output neurons in each Tea layer and therefore directly controls the representational capacity of the network.
+
+The experiments were conducted under the same segmentation configurations described in the previous subsection, while varying the number of output neurons across different settings. The objective is to analyze the trade-off between classification performance and model complexity as the representational capacity of the Tea layers increases.
+
+Table~\ref{tab:results} summarizes the performance obtained under different \textit{Tea Out} configurations.
+
+The experimental results show that increasing the number of output neurons generally improves the classification capability of the proposed architecture. Across most segmentation settings, validation accuracy increased consistently as the \textit{Tea Out} value was increased from 32 to 128 and 256.
+
+For example, under the segmentation setting \((16, 8)\), increasing \textit{Tea Out} from 32 to 64 improved validation accuracy from \(0.80\) to \(0.84\), while further increasing it to 128 and 256 raised the validation accuracy to \(0.85\) and \(0.86\), respectively. At the same time, the validation loss decreased significantly from \(0.49\) to \(0.38\), \(0.33\), and finally \(0.32\). These results indicate that larger output dimensions enable the model to learn more discriminative feature representations.
+
+A similar trend can also be observed for the \((32, 16)\) segmentation configuration. When \textit{Tea Out}=32, the model achieved only \(0.66\) validation accuracy with a validation loss of \(0.75\). Increasing the output dimension to 64 improved the validation accuracy to \(0.81\), while \textit{Tea Out}=128 and 256 further improved the validation accuracy to \(0.84\) and \(0.86\), respectively. Correspondingly, the validation loss decreased from \(0.75\) to \(0.42\), \(0.37\), and \(0.33\).
+
+For smaller segmentation settings such as \((8, 2)\), the same behavior was observed. Validation accuracy improved progressively from \(0.79\) for \textit{Tea Out}=32 to \(0.82\), \(0.84\), and \(0.84\) for output dimensions of 64, 128, and 256, respectively. Although the performance gain became smaller at higher output dimensions, the larger Tea layers still produced more stable validation performance.
+
+These results suggest that increasing the number of output neurons allows each Tea layer to encode richer localized spiking features. Since the proposed architecture relies on parallel feature extraction branches, larger output spaces provide additional representational flexibility for capturing subtle spatial variations in capacitive fingerprint patterns.
+
+However, increasing the \textit{Tea Out} parameter also leads to a substantial increase in model complexity. For the \((16, 8)\) configuration, the number of trainable parameters increased from \(7392\) at \textit{Tea Out}=32 to \(14784\), \(29568\), and \(59136\) for output dimensions of 64, 128, and 256, respectively. Similarly, for the \((8, 4)\) configuration, the parameter count increased from \(8160\) to \(16320\), \(32640\), and \(65280\).
+
+Although larger output dimensions generally improve performance, the improvement becomes progressively smaller beyond \textit{Tea Out}=128. For instance, under the \((16, 8)\) setting, increasing \textit{Tea Out} from 128 to 256 improved validation accuracy by only \(1\%\) (\(0.85 \rightarrow 0.86\)), while the number of parameters doubled from \(29568\) to \(59136\). This indicates diminishing returns in representational benefit at very large output dimensions.
+
+Overall, the experimental results demonstrate that the \textit{Tea Out} parameter plays a crucial role in balancing representational capacity and computational efficiency. Small output dimensions often lead to insufficient feature representation and reduced classification performance, while excessively large output dimensions substantially increase model complexity with only marginal performance improvement. Among the evaluated configurations, moderate-to-large output dimensions such as 128 and 256 provide the most favorable balance between accuracy and representational capability.
 \subsection{Effect of Temporal Encoding Window}
 \subsection{Discussion}
 

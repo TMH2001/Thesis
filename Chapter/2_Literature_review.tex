@@ -4,7 +4,6 @@ Touchscreen interaction is widely used in modern mobile devices, yet it is typic
 
 \section{Scope of Research}
 \subsection{Task Description}
-\subsection{Task Description}
 
 This thesis addresses the problem of classifying capacitive fingerprint images collected from touchscreen devices. Unlike traditional input modalities that only capture 2D touch locations, capacitive sensing enables the acquisition of low-resolution fingerprint-like images, which contain distinctive patterns related to different fingers. The CapFingerId \cite{CapfingerId} dataset provides a large-scale collection of such images, comprising various finger combinations, particularly focusing on commonly used fingers such as the thumb and index finger.
 
@@ -23,6 +22,7 @@ In this thesis, both the proposed RANC-based Spiking Neural Network (SNN) and th
 These classification settings enable comprehensive evaluation of the proposed architectures under multiple levels of finger discrimination difficulty, ranging from coarse-grained categorization to fine-grained finger identification.
 
 Although the CapFingerId dataset was collected under multiple interaction activities such as tapping, swiping, and other touchscreen gestures, this research focuses exclusively on samples generated from \textit{tap} interactions. The tapping scenario provides relatively stable finger contact patterns and allows more controlled evaluation of the proposed models without the additional motion variability introduced by dynamic gestures.
+
 \subsection{Problem Formulation}
 Formally, let the dataset be defined as:
 \begin{equation}
@@ -36,42 +36,20 @@ where $\theta$ denotes the model parameters. The model is trained to minimize th
 
 \subsection{Evaluation Metrics}
 
-To comprehensively evaluate model performance, multiple classification metrics are employed, including accuracy, precision, recall, and F1-score.
+The performance of the proposed models is evaluated primarily using classification accuracy. Accuracy measures the proportion of correctly classified samples over the total number of evaluated samples and is defined as:
 
-\textbf{Accuracy} measures the overall proportion of correctly classified samples:
 \[
-\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\text{Accuracy} =
+\frac{N_{\text{correct}}}{N_{\text{total}}}
 \]
-where $TP$, $TN$, $FP$, and $FN$ denote true positives, true negatives, false positives, and false negatives, respectively. While accuracy provides a general performance overview, it may be misleading in imbalanced datasets.
 
-\textbf{Precision} evaluates the reliability of positive predictions:
-\[
-\text{Precision} = \frac{TP}{TP + FP}
-\]
-A high precision indicates that when the model predicts a certain finger class, it is likely to be correct.
+where \(N_{\text{correct}}\) denotes the number of correctly predicted samples and \(N_{\text{total}}\) represents the total number of testing samples.
 
-\textbf{Recall} (or sensitivity) measures the model's ability to correctly identify all relevant samples:
-\[
-\text{Recall} = \frac{TP}{TP + FN}
-\]
-A high recall implies that the model successfully captures most instances of a given finger class, even if some predictions may be incorrect.
+Accuracy is selected as the primary evaluation metric because the classification tasks considered in this thesis are formulated as multi-class finger classification problems with balanced evaluation settings. The metric provides a straightforward and interpretable measure of the overall recognition capability of the proposed architectures.
 
-\textbf{F1-score} provides a balanced measure by combining precision and recall:
-\[
-\text{F1-score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
-\]
-This metric is particularly useful when there is a trade-off between precision and recall.
+In addition to classification accuracy, the number of trainable parameters is also reported to evaluate the computational complexity of different model configurations. Since the proposed architectures are intended for lightweight and resource-constrained neuromorphic systems, parameter efficiency is considered an important factor alongside recognition performance.
 
-\textbf{Interpretation of metric trade-offs:}
-Different combinations of these metrics reveal distinct model behaviors:
-\begin{itemize}
-    \item High accuracy but low precision/recall: the model may be biased toward dominant classes and fails to generalize well to minority classes.
-    \item High precision but low recall: the model is conservative in making predictions, producing fewer false positives but missing many true instances (under-detection).
-    \item High recall but low precision: the model detects most true instances but at the cost of many false positives (over-detection).
-    \item Balanced precision and recall (high F1-score): the model achieves a good trade-off between correctness and completeness.
-\end{itemize}
-
-In the context of finger-type classification, these trade-offs are critical. For example, a model with high recall ensures that most finger types are correctly detected, while high precision guarantees that predicted finger labels are reliable. Therefore, the F1-score is used as a key complementary metric to accuracy in order to reflect overall classification robustness.
+Therefore, the experimental analysis focuses on the trade-off between classification accuracy and model complexity under different architectural and temporal encoding configurations.
 
 \subsection{Constraints and Research Gap}
 While convolutional neural networks (CNNs) have demonstrated strong performance on similar tasks, they often require significant computational resources. In contrast, Spiking Neural Networks (SNNs) offer a more energy-efficient alternative but remain underexplored for capacitive fingerprint classification. Furthermore, the application of transformer-based models within the SNN paradigm is still limited. These challenges motivate the development of efficient and accurate models in this thesis.
