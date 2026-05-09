@@ -61,9 +61,67 @@ where \(N_{\text{correct}}\) denotes the number of correctly predicted samples a
 In addition to classification accuracy, the number of trainable parameters was also reported to evaluate the computational complexity of different architectural configurations. Since the proposed SNN is intended for lightweight and resource-constrained neuromorphic systems, parameter efficiency is considered an important factor alongside recognition performance.
 
 The combination of these metrics enables analysis of the trade-off between model complexity and classification capability under different temporal encoding and segmentation configurations.
-\subsection{Effect of Temporal Encoding Window}
 \subsection{Effect of Parallel Segmentation Strategy}
+This experiment investigates the effect of the proposed parallel segmentation strategy on the performance of the RANC-based SNN architecture. In particular, the analysis focuses on two important segmentation parameters: the segment size (\textit{Elems}) and the overlap size (\textit{Overlap}). The experiments were conducted using a temporal encoding window of \(T=1\), corresponding to the binary spike encoding setting.
+
+The objective of this experiment is to evaluate how different segmentation configurations influence feature extraction capability, spatial continuity preservation, and model complexity. Different combinations of segment size and overlap were therefore explored while monitoring both classification performance and the number of trainable parameters.
+
+Table~\ref{tab:results} summarizes the experimental results obtained for different model configurations.
+
+\begin{table*}[t]
+\centering
+\caption{Model configurations and performance under different parallel segmentation settings (\(T=1\)).}
+\begin{tabular}{cccccccc}
+\toprule
+\multicolumn{3}{c}{\textbf{Model}} & \textbf{Tr. Acc.} & \textbf{Val. Acc.} & \textbf{Tr. Loss} & \textbf{Val. Loss} & \textbf{\#Params} \\
+\cmidrule(lr){1-3}
+Elems & Overlap & Tea Out & & & & & \\
+\midrule
+16 & 8 & 64 & 0.87 & 0.84 & 0.31 & 0.38 & 14784 \\
+32 & 8 & 64 & 0.81 & 0.77 & 0.43 & 0.63 & 8320 \\
+16 & 4 & 32 & 0.82 & 0.77 & 0.40 & 0.60 & 5280 \\
+32 & 16 & 128 & 0.86 & 0.84 & 0.32 & 0.37 & 24960 \\
+16 & 4 & 64 & 0.85 & 0.84 & 0.34 & 0.41 & 10560 \\
+32 & 16 & 64 & 0.84 & 0.81 & 0.37 & 0.42 & 12480 \\
+16 & 8 & 128 & 0.88 & 0.85 & 0.28 & 0.33 & 29568 \\
+32 & 8 & 256 & 0.86 & 0.84 & 0.32 & 0.37 & 33280 \\
+8 & 2 & 64 & 0.85 & 0.81 & 0.35 & 0.46 & 10880 \\
+8 & 2 & 256 & 0.87 & 0.84 & 0.31 & 0.38 & 43520 \\
+32 & 8 & 128 & 0.84 & 0.82 & 0.36 & 0.46 & 16640 \\
+8 & 4 & 64  & 0.86 & 0.83 & 0.32 & 0.40 & 16320 \\
+16 & 4 & 256 & 0.89 & 0.86 & 0.27 & 0.32 & 42240 \\
+8 & 4 & 32  & 0.85 & 0.76 & 0.35 & 0.52 & 8160  \\
+32 & 16 & 256 & 0.88 & 0.86 & 0.30 & 0.33 & 49920 \\
+16 & 8  & 32  & 0.84 & 0.80 & 0.37 & 0.49 & 7392  \\
+32 & 8  & 32  & 0.74 & 0.62 & 0.54 & 0.88 & 4160  \\
+8  & 2  & 32  & 0.83 & 0.79 & 0.38 & 0.54 & 5440  \\
+32 & 16 & 32  & 0.75 & 0.66 & 0.53 & 0.75 & 6240  \\
+8  & 4  & 256 & 0.88 & 0.85 & 0.29 & 0.35 & 65280 \\
+8  & 2  & 128 & 0.86 & 0.82 & 0.33 & 0.43 & 21760 \\
+16 & 4  & 128 & 0.88 & 0.85 & 0.29 & 0.35 & 21120 \\
+\textbf{16} & \textbf{8}  & \textbf{256} & 0.89 & 0.86 & 0.27 & 0.32 & 59136 \\
+8  & 4  & 128 & 0.87 & 0.85 & 0.30 & 0.37 & 32640 \\
+\bottomrule
+\end{tabular}
+\label{tab:results}
+\end{table*}
+
+The experimental results demonstrate that the segmentation strategy has a significant impact on the recognition performance of the proposed architecture. In general, configurations with moderate segment sizes and overlapping regions achieved better validation accuracy and lower validation loss compared to configurations with either excessively small or excessively large segments.
+
+For configurations using a segment size of 16 with overlap 8, the model consistently achieved strong validation performance across different settings, reaching validation accuracies up to \(0.86\). This indicates that the selected segmentation strategy provides a suitable balance between local feature extraction and preservation of spatial continuity across neighboring segments.
+
+In contrast, configurations using larger segment sizes with insufficient overlap, such as \((32, 8)\), tended to produce lower validation accuracy and significantly higher validation loss. This behavior suggests that reduced overlap may weaken the continuity of spatial information between adjacent regions, making it more difficult for the model to capture localized fingerprint patterns effectively.
+
+Similarly, configurations with very small segments and limited overlap also exhibited reduced performance in several cases. Although smaller segments allow more localized processing and increased parallelism, excessive fragmentation of the input may limit the amount of contextual information available to each processing branch.
+
+The results further indicate that introducing overlap between neighboring segments plays an important role in improving robustness and classification stability. Overlapping regions enable adjacent branches to observe shared spatial patterns, reducing information loss near segment boundaries and improving the continuity of extracted features.
+
+From a computational perspective, the segmentation strategy also affects the number of trainable parameters. Configurations with larger overlapping regions generally introduce higher model complexity due to the increased number of effective input connections. Therefore, the selection of segmentation parameters must consider the trade-off between recognition performance and computational efficiency.
+
+Overall, the experimental results demonstrate that the proposed overlapping parallel segmentation strategy effectively improves feature extraction capability while maintaining a lightweight architecture. Among the evaluated configurations, the combination of moderate segment size and moderate overlap provides the most favorable balance between accuracy and model complexity.
+
 \subsection{Effect of Tea Out}
+\subsection{Effect of Temporal Encoding Window}
 \subsection{Discussion}
 
 

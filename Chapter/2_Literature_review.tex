@@ -4,10 +4,25 @@ Touchscreen interaction is widely used in modern mobile devices, yet it is typic
 
 \section{Scope of Research}
 \subsection{Task Description}
+\subsection{Task Description}
+
 This thesis addresses the problem of classifying capacitive fingerprint images collected from touchscreen devices. Unlike traditional input modalities that only capture 2D touch locations, capacitive sensing enables the acquisition of low-resolution fingerprint-like images, which contain distinctive patterns related to different fingers. The CapFingerId \cite{CapfingerId} dataset provides a large-scale collection of such images, comprising various finger combinations, particularly focusing on commonly used fingers such as the thumb and index finger.
 
 However, capacitive images present several challenges compared to conventional optical fingerprint images. Specifically, they are characterized by low resolution, high noise levels, and significant variations in touch position and pressure. Furthermore, the task requires the model to learn position-invariant features in order to robustly distinguish between different fingers under varying interaction conditions. These characteristics make the classification problem non-trivial and motivate the need for robust and efficient learning approaches.
 
+In this thesis, both the proposed RANC-based Spiking Neural Network (SNN) and the Spiking Vision Transformer (Spiking ViT) are designed to perform multi-class finger classification on capacitive touch images. The classification tasks include distinguishing between:
+
+\begin{enumerate}[label=\Roman*.]
+    \item Left and right thumbs,
+    \item Left and right index fingers,
+    \item Thumb and index finger categories,
+    \item Thumb and non-thumb finger categories,
+    \item Different fingers belonging to the same hand.
+\end{enumerate}
+
+These classification settings enable comprehensive evaluation of the proposed architectures under multiple levels of finger discrimination difficulty, ranging from coarse-grained categorization to fine-grained finger identification.
+
+Although the CapFingerId dataset was collected under multiple interaction activities such as tapping, swiping, and other touchscreen gestures, this research focuses exclusively on samples generated from \textit{tap} interactions. The tapping scenario provides relatively stable finger contact patterns and allows more controlled evaluation of the proposed models without the additional motion variability introduced by dynamic gestures.
 \subsection{Problem Formulation}
 Formally, let the dataset be defined as:
 \begin{equation}
