@@ -1,0 +1,73 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\section{Experimental Evaluation of RANC-based SNN}
+\subsection{Experimental Setup}
+
+This section presents the experimental configuration used to evaluate the proposed RANC-based Spiking Neural Network (SNN). The experiments were designed to investigate the effects of temporal encoding and architectural parameters on both recognition performance and model complexity.
+
+\subsubsection{Training Configuration}
+
+The proposed SNN was implemented using the TensorFlow framework and trained using the Adam optimizer with an initial learning rate of \(0.001\). The model was trained for a maximum of 300 epochs using categorical cross-entropy as the optimization objective for multi-class classification.
+
+To prevent overfitting and reduce unnecessary computation, early stopping was employed with a patience value of 10 epochs based on the validation loss. In addition, dropout with a rate of \(0.15\) was applied after each Tea layer to improve the generalization capability of the model.
+
+During training, differentiable approximations were adopted for discrete spiking operations. Specifically, the spike generation process was approximated using a sigmoid activation function to enable gradient propagation, while the binary connection masks of Tea layers were trained as continuous-valued parameters and discretized during inference.
+
+\subsubsection{Experimental Settings}
+
+The experimental analysis focused on two main groups of parameters:
+
+\begin{itemize}
+    \item \textbf{Temporal encoding parameter}: the number of encoding time steps \(T\), which determines the temporal resolution of the burst encoding scheme.
+    
+    \item \textbf{Parallel segmentation parameters}: including the segment size (\textit{Elems}), overlap size (\textit{Overlap}), and the number of output neurons in each Tea layer (\textit{Tea Out}).
+\end{itemize}
+
+To systematically analyze the effect of each parameter, only one parameter group was varied at a time while the remaining parameters were fixed to their default values.
+
+The default configuration of the proposed architecture is summarized in Table~\ref{tab:ranc_default_config}.
+
+\begin{table}[h]
+\centering
+\caption{Default configuration of the proposed RANC-based SNN}
+\label{tab:ranc_default_config}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Parameter} & \textbf{Value} \\ \hline
+Optimizer & Adam \\ \hline
+Learning Rate & 0.001 \\ \hline
+Maximum Epochs & 300 \\ \hline
+Early Stopping Patience & 10 \\ \hline
+Dropout Rate & 0.15 \\ \hline
+Encoding Window \(T\) & 4 \\ \hline
+Segment Size (Elems) & 16 \\ \hline
+Overlap & 8 \\ \hline
+Tea Out & 256 \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Evaluation Metrics}
+
+The performance of the proposed architecture was evaluated primarily using classification accuracy. Accuracy measures the proportion of correctly classified fingerprint samples over the total number of evaluated samples and is defined as:
+
+\[
+\text{Accuracy} =
+\frac{N_{\text{correct}}}{N_{\text{total}}}
+\]
+
+where \(N_{\text{correct}}\) denotes the number of correctly predicted samples and \(N_{\text{total}}\) represents the total number of testing samples.
+
+In addition to classification accuracy, the number of trainable parameters was also reported to evaluate the computational complexity of different architectural configurations. Since the proposed SNN is intended for lightweight and resource-constrained neuromorphic systems, parameter efficiency is considered an important factor alongside recognition performance.
+
+The combination of these metrics enables analysis of the trade-off between model complexity and classification capability under different temporal encoding and segmentation configurations.
+\subsection{Effect of Temporal Encoding Window}
+\subsection{Effect of Parallel Segmentation Strategy}
+\subsection{Effect of Tea Out}
+\subsection{Discussion}
+
+
+\section{Experimental Evaluation of Spiking Vision Transformer}
+\subsection{Experimental Setup}
+
+\end{document}
