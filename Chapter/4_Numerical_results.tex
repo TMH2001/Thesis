@@ -131,9 +131,58 @@ However, increasing the \textit{Tea Out} parameter also leads to a substantial i
 Although larger output dimensions generally improve performance, the improvement becomes progressively smaller beyond \textit{Tea Out}=128. For instance, under the \((16, 8)\) setting, increasing \textit{Tea Out} from 128 to 256 improved validation accuracy by only \(1\%\) (\(0.85 \rightarrow 0.86\)), while the number of parameters doubled from \(29568\) to \(59136\). This indicates diminishing returns in representational benefit at very large output dimensions.
 
 Overall, the experimental results demonstrate that the \textit{Tea Out} parameter plays a crucial role in balancing representational capacity and computational efficiency. Small output dimensions often lead to insufficient feature representation and reduced classification performance, while excessively large output dimensions substantially increase model complexity with only marginal performance improvement. Among the evaluated configurations, moderate-to-large output dimensions such as 128 and 256 provide the most favorable balance between accuracy and representational capability.
+
 \subsection{Effect of Temporal Encoding Window}
+
+This experiment investigates the effect of the temporal encoding window \(T\) on the performance of the proposed RANC-based SNN architecture. To isolate the influence of temporal encoding, the experiments were conducted using the best-performing segmentation configuration identified in the previous experiments, namely \textit{Elems}=16, \textit{Overlap}=8, and \textit{Tea Out}=256.
+
+The temporal encoding window determines the number of discrete time steps used in the burst encoding process. Increasing \(T\) allows each pixel intensity to be represented with finer temporal resolution through longer spike bursts, potentially enabling the network to capture richer spatio-temporal information.
+
+Table~\ref{tab:timestep_results} summarizes the experimental results obtained under different temporal encoding windows.
+
+\begin{table}[h]
+\centering
+\caption{Performance of the proposed RANC-based SNN under different temporal encoding windows using the best segmentation configuration (\textit{Elems}=16, \textit{Overlap}=8, \textit{Tea Out}=256).}
+\label{tab:timestep_results}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Time Steps (\(T\))} & \textbf{Tr. Acc.} & \textbf{Val. Acc.} & \textbf{Tr. Loss} & \textbf{Val. Loss} \\
+\midrule
+1  & 0.89 & 0.86 & 0.27 & 0.32 \\
+2  & 0.91 & 0.86 & 0.26 & 0.32 \\
+4  & 0.93 & 0.88 & 0.25 & 0.32 \\
+8  & 0.93 & 0.88 & 0.24 & 0.31 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The experimental results demonstrate that increasing the temporal encoding window generally improves the recognition capability of the proposed SNN architecture. As the number of time steps increased from \(T=1\) to \(T=4\), both training accuracy and validation accuracy improved consistently, while training loss decreased gradually.
+
+Specifically, when using a single time step (\(T=1\)), corresponding to binary spike encoding, the model achieved a validation accuracy of \(0.86\) with a validation loss of \(0.32\). Increasing the encoding window to \(T=2\) improved the training accuracy from \(0.89\) to \(0.91\), although the validation accuracy remained unchanged at \(0.86\). This suggests that a small increase in temporal resolution allows the model to learn richer internal representations without yet producing a substantial improvement in generalization performance.
+
+More noticeable improvement was observed when increasing the temporal window to \(T=4\). Under this configuration, the validation accuracy increased to \(0.88\), while the training loss decreased further to \(0.25\). These results indicate that additional temporal information enables the network to better capture subtle variations in capacitive fingerprint patterns through burst-based spike representations.
+
+When the temporal window was further increased to \(T=8\), the validation accuracy remained at \(0.88\), while the validation loss decreased slightly from \(0.32\) to \(0.31\). The limited improvement between \(T=4\) and \(T=8\) suggests that the representational benefit of increasing temporal resolution gradually saturates beyond moderate time windows.
+
+The selected temporal encoding settings were motivated by the timestep configurations commonly adopted in the original SpikeFormer \cite{zhou2023spikeformer} architecture, where small-to-moderate temporal windows such as \(T=1\), \(T=2\), \(T=4\), and \(T=8\) were shown to provide effective trade-offs between performance and computational efficiency. Following this experimental convention enables consistent comparison with existing spiking transformer literature while remaining suitable for lightweight neuromorphic computation.
+
+In addition, larger temporal windows were not extensively explored in this work because preliminary experiments indicated diminishing performance gains at high timestep values. In particular, although configurations such as \(T=16\) produced accuracy levels approaching those of conventional CNN-based approaches, the improvement over \(T=4\) and \(T=8\) was relatively small compared to the additional computational cost and inference latency introduced by longer spike sequences.
+
+Overall, the experimental results demonstrate that temporal encoding plays an important role in improving the discriminative capability of the proposed SNN architecture. Moderate temporal windows such as \(T=4\) and \(T=8\) provide the most favorable balance between recognition performance and computational efficiency, while excessively large timestep values introduce higher computational overhead with limited additional benefit.
+
 \subsection{Discussion}
 
+The experimental results demonstrate that the proposed RANC-based SNN architecture is highly sensitive to both spatial segmentation design and temporal encoding configuration. In particular, the parallel segmentation strategy plays a critical role in balancing localized feature extraction and spatial continuity preservation. Configurations using moderate segment sizes with sufficient overlap, especially the \((16,8)\) setting, consistently achieved the best trade-off between validation accuracy and model complexity across different experiments.
+
+The results further show that increasing the representational capacity of Tea layers through larger \textit{Tea Out} values improves classification performance by enabling richer spiking feature representations. However, the improvement gradually saturates at high output dimensions. For example, increasing \textit{Tea Out} from 128 to 256 only improved validation accuracy from \(0.85\) to \(0.86\) under the \((16,8)\) configuration, while doubling the number of trainable parameters. This suggests that excessively large Tea layers may introduce unnecessary computational overhead with limited practical benefit.
+
+The temporal encoding experiments also confirm the importance of temporal information in spike-based computation. Increasing the encoding window from \(T=1\) to \(T=4\) improved validation accuracy from \(0.86\) to \(0.88\), demonstrating that burst-based temporal representations allow the network to capture more discriminative fingerprint patterns. Nevertheless, the performance gain became marginal beyond moderate timestep values, indicating diminishing returns for large temporal windows.
+
+Another important observation is that the proposed architecture achieves competitive recognition performance while maintaining relatively lightweight model complexity compared to conventional deep learning approaches. The use of binary spike representations, discretized Tea connections, and parallel localized processing contributes to efficient neuromorphic-compatible computation without severely compromising classification accuracy.
+
+Overall, the experiments validate the effectiveness of combining overlapping parallel segmentation with temporal spike encoding for capacitive fingerprint classification. The results indicate that carefully selected architectural parameters allow the proposed SNN to achieve a favorable balance between recognition performance, representational capability, and computational efficiency.
+
+Finally, the findings also suggest that moderate temporal resolutions and moderate network capacities are generally sufficient for this task. This characteristic is particularly important for resource-constrained neuromorphic systems, where reducing inference latency and computational cost is often as critical as maximizing classification accuracy.
 
 \section{Experimental Evaluation of Spiking Vision Transformer}
 \subsection{Experimental Setup}
