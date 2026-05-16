@@ -58,79 +58,117 @@ Table~\ref{tab:results} summarizes the experimental results obtained for differe
 \begin{table*}[t]
 \centering
 \caption{Model configurations and performance under different parallel segmentation settings (\(T=1\)).}
+\resizebox{0.92\textwidth}{!}{
 \begin{tabular}{cccccccc}
 \toprule
-\multicolumn{3}{c}{\textbf{Model}} & \textbf{Tr. Acc.} & \textbf{Val. Acc.} & \textbf{Tr. Loss} & \textbf{Val. Loss} & \textbf{\#Params} \\
+\multicolumn{3}{c}{\textbf{Model}} & \textbf{Index L/R} & \textbf{Thumb L/R} & \textbf{Thumb/Index} & \textbf{Thumb/Others} & \textbf{5 Fingers}\\
 \cmidrule(lr){1-3}
-Elems & Overlap & Tea Out & & & & & \\
+Elems & Overlap & Tea Out & & & & &\\
 \midrule
-16 & 8 & 64 & 0.87 & 0.84 & 0.31 & 0.38 & 14784 \\
-32 & 8 & 64 & 0.81 & 0.77 & 0.43 & 0.63 & 8320 \\
-16 & 4 & 32 & 0.82 & 0.77 & 0.40 & 0.60 & 5280 \\
-32 & 16 & 128 & 0.86 & 0.84 & 0.32 & 0.37 & 24960 \\
-16 & 4 & 64 & 0.85 & 0.84 & 0.34 & 0.41 & 10560 \\
-32 & 16 & 64 & 0.84 & 0.81 & 0.37 & 0.42 & 12480 \\
-16 & 8 & 128 & 0.88 & 0.85 & 0.28 & 0.33 & 29568 \\
-32 & 8 & 256 & 0.86 & 0.84 & 0.32 & 0.37 & 33280 \\
-8 & 2 & 64 & 0.85 & 0.81 & 0.35 & 0.46 & 10880 \\
-8 & 2 & 256 & 0.87 & 0.84 & 0.31 & 0.38 & 43520 \\
-32 & 8 & 128 & 0.84 & 0.82 & 0.36 & 0.46 & 16640 \\
-8 & 4 & 64  & 0.86 & 0.83 & 0.32 & 0.40 & 16320 \\
-16 & 4 & 256 & 0.89 & 0.86 & 0.27 & 0.32 & 42240 \\
-8 & 4 & 32  & 0.85 & 0.76 & 0.35 & 0.52 & 8160  \\
-32 & 16 & 256 & 0.88 & 0.86 & 0.30 & 0.33 & 49920 \\
-16 & 8  & 32  & 0.84 & 0.80 & 0.37 & 0.49 & 7392  \\
-32 & 8  & 32  & 0.74 & 0.62 & 0.54 & 0.88 & 4160  \\
-8  & 2  & 32  & 0.83 & 0.79 & 0.38 & 0.54 & 5440  \\
-32 & 16 & 32  & 0.75 & 0.66 & 0.53 & 0.75 & 6240  \\
-8  & 4  & 256 & 0.88 & 0.85 & 0.29 & 0.35 & 65280 \\
-8  & 2  & 128 & 0.86 & 0.82 & 0.33 & 0.43 & 21760 \\
-16 & 4  & 128 & 0.88 & 0.85 & 0.29 & 0.35 & 21120 \\
-\textbf{16} & \textbf{8}  & \textbf{256} & 0.89 & 0.86 & 0.27 & 0.32 & 59136 \\
-8  & 4  & 128 & 0.87 & 0.85 & 0.30 & 0.37 & 32640 \\
-\bottomrule
+16 & 8 & 64 & 0.60 & 0.84 & 0.78 & 0.81 & 0.42 \\
+32 & 8 & 64 & 0.56 & 0.77 & 0.75 & 0.77 & 0.39 \\
+16 & 4 & 32 & 0.57 & 0.77 & 0.74 & 0.76 & 0.40 \\
+32 & 16 & 128 & 0.61 & 0.84 & 0.79 & 0.82 & 0.43 \\
+16 & 4 & 64 & 0.59 & 0.84 & 0.77 & 0.80 & 0.41 \\
+32 & 16 & 64 & 0.57 & 0.81 & 0.76 & 0.79 & 0.40 \\
+16 & 8 & 128 & 0.62 & 0.85 & \textbf{0.80} & 0.83 & 0.41 \\
+32 & 8 & 256 & 0.61 & 0.84 & 0.79 & 0.82 & 0.43 \\
+8 & 2 & 64 & 0.57 & 0.81 & 0.75 & 0.78 & 0.40 \\
+8 & 2 & 256 & 0.60 & 0.84 & 0.78 & 0.81 & 0.42 \\
+32 & 8 & 128 & 0.58 & 0.82 & 0.76 & 0.79 & 0.41 \\
+8 & 4 & 64  & 0.59 & 0.83 & 0.77 & 0.80 & 0.41 \\
+16 & 4 & 256 & 0.62 & \textbf{0.86} & 0.81 & \textbf{0.84} & 0.42 \\
+8 & 4 & 32  & 0.56 & 0.76 & 0.74 & 0.76 & 0.39 \\
+32 & 16 & 256 & 0.62 & \textbf{0.86} & \textbf{0.80} & 0.83 & 0.42 \\
+16 & 8  & 32  & 0.57 & 0.80 & 0.75 & 0.78 & 0.40 \\
+32 & 8  & 32  & 0.55 & 0.62 & 0.74 & 0.76 & 0.39 \\
+8  & 2  & 32  & 0.56 & 0.79 & 0.75 & 0.77 & 0.40 \\
+32 & 16 & 32  & 0.55 & 0.66 & 0.74 & 0.76 & 0.39 \\
+8  & 4  & 256 & 0.61 & 0.85 & \textbf{0.80} & \textbf{0.84} & 0.43 \\
+8  & 2  & 128 & 0.58 & 0.82 & 0.76 & 0.79 & 0.41 \\
+16 & 4  & 128 & 0.61 & 0.85 & 0.79 & 0.82 & 0.43 \\
+\textbf{16} & \textbf{8}  & \textbf{256} & \textbf{0.63} & \textbf{0.86} & 0.79 & 0.82 & \textbf{0.44} \\
+8  & 4  & 128 & 0.60 & 0.85 & 0.78 & 0.81 & 0.42 \\
+\bottomrule  
 \end{tabular}
+}
 \label{tab:results}
 \end{table*}
 
-The experimental results demonstrate that the segmentation strategy has a significant impact on the recognition performance of the proposed architecture. In general, configurations with moderate segment sizes and overlapping regions achieved better validation accuracy and lower validation loss compared to configurations with either excessively small or excessively large segments.
+\begin{table*}[t]
+\centering
+\caption{Number of trainable parameters under different parallel segmentation configurations.}
+\begin{tabular}{cccc}
+\toprule
+\multicolumn{3}{c}{\textbf{Model}} & \textbf{\#Params} \\
+\cmidrule(lr){1-3}
+Elems & Overlap & Tea Out &\\
+\midrule
+16 & 8 & 64 &14784 \\
+32 & 8 & 64 &8320 \\
+16 & 4 & 32 &5280 \\
+32 & 16 & 128 &24960 \\
+16 & 4 & 64 &10560 \\
+32 & 16 & 64 &12480 \\
+16 & 8 & 128 &29568 \\
+32 & 8 & 256 &33280 \\
+8 & 2 & 64 &10880 \\
+8 & 2 & 256 &43520 \\
+32 & 8 & 128 &16640 \\
+8 & 4 & 64  &16320 \\
+16 & 4 & 256 &42240 \\
+8 & 4 & 32  &8160  \\
+32 & 16 & 256 &49920 \\
+16 & 8  & 32  &7392  \\
+32 & 8  & 32  &4160  \\
+8  & 2  & 32  &5440  \\
+32 & 16 & 32  &6240  \\
+8  & 4  & 256 &65280 \\
+8  & 2  & 128 &21760 \\
+16 & 4  & 128 &21120 \\
+16 & 8  & 256 &59136 \\
+8  & 4  & 128 &32640 \\
+\bottomrule
+\end{tabular}
+\label{tab:num-params}
+\end{table*}
 
-For configurations using a segment size of 16 with overlap 8, the model consistently achieved strong validation performance across different settings. Specifically, validation accuracy increased from \(0.80\) for \textit{Tea Out}=32 to \(0.84\), \(0.85\), and \(0.86\) for output dimensions of 64, 128, and 256, respectively. At the same time, validation loss decreased from \(0.49\) to \(0.38\), \(0.33\), and \(0.32\). These results indicate that the \((16,8)\) segmentation setting provides an effective balance between local feature extraction and preservation of spatial continuity across neighboring segments.
+The experimental results demonstrate that the proposed parallel segmentation strategy significantly affects the recognition capability of the RANC-based SNN architecture across all fingerprint classification tasks. In general, configurations with moderate segment sizes and sufficient overlap consistently achieved better classification accuracy compared to configurations using either excessively large segments with limited overlap or very small fragmented segments.
 
-In contrast, configurations using larger segment sizes with insufficient overlap, such as \((32, 8)\), consistently produced lower validation performance. For example, validation accuracy reached only \(0.62\) when \textit{Tea Out}=32, with a high validation loss of \(0.88\). Even when increasing the representational capacity to \textit{Tea Out}=64 and 128, validation accuracy improved only to \(0.77\) and \(0.82\), respectively. This behavior suggests that reduced overlap weakens the continuity of spatial information between adjacent regions, limiting the model's ability to capture localized fingerprint patterns effectively.
+Among all evaluated configurations, the $(16,8)$ segmentation setting consistently produced the strongest overall performance. Under \textit{Tea Out}=256, this configuration achieved the best results in several tasks, including $0.63$ for \textit{Index L/R}, $0.86$ for \textit{Thumb L/R}, and the highest $5$-finger classification accuracy of $0.44$, while using $59136$ trainable parameters. Even with smaller output dimensions, the $(16,8)$ setting remained highly stable, achieving $0.60$, $0.62$, and $0.63$ for \textit{Index L/R} under \textit{Tea Out}=64, 128, and 256, respectively. These results indicate that the $(16,8)$ configuration provides an effective balance between localized feature extraction and preservation of spatial continuity across neighboring fingerprint regions.
 
-Similarly, configurations with very small segments and limited overlap also exhibited reduced performance in several cases. For the \((8,2)\) setting, validation accuracy ranged from \(0.79\) to \(0.84\) depending on the output dimension, while validation loss remained relatively high, reaching \(0.54\) for \textit{Tea Out}=32. Although smaller segments allow increased parallelism and localized processing, excessive fragmentation of the input appears to limit the contextual information available to each processing branch.
+In contrast, configurations using larger segment sizes with insufficient overlap, particularly $(32,8)$, consistently produced weaker performance. For example, the $(32,8,32)$ configuration achieved only $0.55$ for \textit{Index L/R}, $0.62$ for \textit{Thumb L/R}, $0.74$ for \textit{Thumb/Index}, and $0.39$ for the $5$-finger classification task, despite using only $4160$ trainable parameters. Although increasing \textit{Tea Out} improved performance for this segmentation setting, the overall accuracy remained lower than configurations with larger overlap. For instance, $(32,8,128)$ achieved $0.58$ for \textit{Index L/R} and $0.82$ for \textit{Thumb L/R}, which were still below the corresponding results obtained by the $(32,16)$ configuration.
 
-The results further indicate that introducing overlap between neighboring segments plays an important role in improving robustness and classification stability. Comparing the \((8,2)\) and \((8,4)\) configurations demonstrates this effect clearly. When the overlap was increased from 2 to 4, validation accuracy improved from \(0.79\) to \(0.76\) for \textit{Tea Out}=32, from \(0.81\) to \(0.83\) for \textit{Tea Out}=64, and from \(0.82\) to \(0.85\) for \textit{Tea Out}=128. These improvements suggest that overlapping regions help preserve shared spatial patterns across adjacent segments and reduce information loss near segment boundaries.
+The importance of overlap can be observed clearly when comparing $(32,8)$ and $(32,16)$. Increasing the overlap from 8 to 16 improved \textit{Thumb L/R} accuracy from $0.77$ to $0.81$ for \textit{Tea Out}=64, and from $0.82$ to $0.84$ for \textit{Tea Out}=128. Similarly, \textit{Index L/R} improved from $0.56$ to $0.57$ for \textit{Tea Out}=64 and from $0.58$ to $0.61$ for \textit{Tea Out}=128. The $5$-finger classification accuracy also increased from $0.39$ to $0.40$ and $0.41$ to $0.43$, respectively. These improvements suggest that overlapping neighboring regions helps preserve shared spatial patterns and reduces information loss near segmentation boundaries.
 
-A similar trend can also be observed for larger segment sizes. For example, increasing overlap from 8 to 16 in the 32-element segmentation setting improved validation accuracy from \(0.77\) to \(0.81\) for \textit{Tea Out}=64, and from \(0.82\) to \(0.84\) for \textit{Tea Out}=128. This further confirms the importance of overlap in maintaining spatial continuity.
+Configurations using very small segments with limited overlap, such as $(8,2)$, also exhibited reduced performance in several cases. Under \textit{Tea Out}=32, the model achieved only $0.56$ for \textit{Index L/R}, $0.79$ for \textit{Thumb L/R}, and $0.40$ for the $5$-finger task, despite requiring $5440$ parameters. Although increasing the output dimension to 256 improved the performance to $0.60$, $0.84$, and $0.42$, the results remained slightly lower than those obtained by the $(16,8)$ configuration. This behavior suggests that excessive fragmentation of the input reduces the contextual information available to each processing branch, limiting the model’s ability to learn discriminative fingerprint representations.
 
-From a computational perspective, the segmentation strategy also affects the number of trainable parameters. Configurations with larger overlapping regions generally introduce higher model complexity due to the increased number of effective input connections. For instance, under \textit{Tea Out}=128, the parameter count increased from \(16640\) for \((32,8)\) to \(24960\) for \((32,16)\). Similarly, increasing overlap from 2 to 4 for the 8-element segmentation setting increased the parameter count from \(21760\) to \(32640\).
+A similar overlap-related improvement can also be observed for smaller segmentation settings. Comparing $(8,2)$ and $(8,4)$, increasing the overlap improved \textit{Thumb L/R} accuracy from $0.81$ to $0.83$ for \textit{Tea Out}=64, and from $0.82$ to $0.85$ for \textit{Tea Out}=128. The \textit{Thumb/Others} classification accuracy also improved from $0.78$ to $0.80$ for \textit{Tea Out}=64 and from $0.79$ to $0.81$ for \textit{Tea Out}=128. These observations further confirm that overlapping segmentation contributes positively to feature continuity and classification robustness.
 
-Overall, the experimental results demonstrate that the proposed overlapping parallel segmentation strategy effectively improves feature extraction capability while maintaining a lightweight architecture. Among the evaluated configurations, moderate segment sizes with moderate overlap, particularly the \((16,8)\) setting, provide the most favorable balance between classification accuracy and computational complexity.
+From a computational perspective, the segmentation strategy also strongly affects model complexity. Increasing overlap generally introduces additional trainable parameters because of the larger effective receptive regions processed by each Tea layer. For example, under \textit{Tea Out}=128, increasing overlap from 8 to 16 for the 32-element segmentation setting increased the parameter count from $16640$ to $24960$. Similarly, for the 8-element segmentation setting, increasing overlap from 2 to 4 increased the number of parameters from $21760$ to $32640$. Moreover, increasing \textit{Tea Out} substantially enlarged the model size, as observed in the $(16,8)$ configuration where the parameter count increased from $7392$ at \textit{Tea Out}=32 to $59136$ at \textit{Tea Out}=256.
+
+Overall, the experimental results demonstrate that the proposed overlapping parallel segmentation strategy effectively improves feature extraction capability and classification stability across multiple fingerprint classification tasks. Among all evaluated configurations, moderate segment sizes with moderate overlap, particularly the $(16,8)$ configuration, provide the most favorable balance between recognition performance and computational complexity.
+
 \subsection{Effect of Tea Out}
+This experiment investigates the influence of the \textit{Tea Out} parameter on the representational capability and classification performance of the proposed parallel RANC-based SNN architecture. The \textit{Tea Out} parameter determines the dimensionality of the output feature representation generated by each Tea layer. Increasing this value enlarges the latent spiking feature space and allows the network to encode more discriminative fingerprint characteristics.
 
-This experiment investigates the effect of the \textit{Tea Out} parameter on the performance of the proposed RANC-based SNN architecture. The \textit{Tea Out} parameter determines the number of output neurons in each Tea layer and therefore directly controls the representational capacity of the network.
+The experiments were conducted under multiple segmentation configurations while varying the \textit{Tea Out} dimension among \(32\), \(64\), \(128\), and \(256\). The objective is to analyze the trade-off between classification performance and model complexity as the output dimensionality increases.
 
-The experiments were conducted under the same segmentation configurations described in the previous subsection, while varying the number of output neurons across different settings. The objective is to analyze the trade-off between classification performance and model complexity as the representational capacity of the Tea layers increases.
+The experimental results in Table~\ref{tab:results} show that increasing the \textit{Tea Out} dimension generally improves recognition performance across all evaluation tasks. In most configurations, larger output dimensions consistently achieved higher scores for \textit{Index L/R}, \textit{Thumb L/R}, \textit{Thumb/Index}, \textit{Thumb/Others}, and \textit{5 Fingers} classification tasks.
 
-Table~\ref{tab:results} summarizes the performance obtained under different \textit{Tea Out} configurations.
+For the \((16,8)\) segmentation configuration, increasing \textit{Tea Out} from \(32\) to \(64\), \(128\), and \(256\) improved the \textit{Index L/R} score from \(0.57\) to \(0.60\), \(0.62\), and \(0.63\), respectively. Similarly, the \textit{Thumb L/R} performance increased from \(0.80\) to \(0.84\), \(0.85\), and finally \(0.86\). The \textit{5 Fingers} evaluation also improved from \(0.40\) to \(0.42\), \(0.41\), and \(0.44\). These results indicate that larger Tea representations enable the model to capture richer local fingerprint structures and improve classification robustness.
 
-The experimental results show that increasing the number of output neurons generally improves the classification capability of the proposed architecture. Across most segmentation settings, validation accuracy increased consistently as the \textit{Tea Out} value was increased from 32 to 128 and 256.
+A similar trend can also be observed for the \((32,16)\) configuration. When \textit{Tea Out}=32, the model achieved relatively low scores, including \(0.55\) for \textit{Index L/R} and \(0.66\) for \textit{Thumb L/R}. Increasing the output dimension to \(64\), \(128\), and \(256\) progressively improved the performance to \(0.57\), \(0.61\), and \(0.62\) for \textit{Index L/R}, while \textit{Thumb L/R} improved to \(0.81\), \(0.84\), and \(0.86\), respectively. The \textit{Thumb/Others} metric also improved from \(0.76\) to \(0.79\), \(0.82\), and \(0.83\).
 
-For example, under the segmentation setting \((16, 8)\), increasing \textit{Tea Out} from 32 to 64 improved validation accuracy from \(0.80\) to \(0.84\), while further increasing it to 128 and 256 raised the validation accuracy to \(0.85\) and \(0.86\), respectively. At the same time, the validation loss decreased significantly from \(0.49\) to \(0.38\), \(0.33\), and finally \(0.32\). These results indicate that larger output dimensions enable the model to learn more discriminative feature representations.
+For smaller segmentation settings such as \((8,2)\), the same behavior was consistently observed. Increasing \textit{Tea Out} from \(32\) to \(64\), \(128\), and \(256\) improved the \textit{Thumb L/R} score from \(0.79\) to \(0.81\), \(0.82\), and \(0.84\), respectively. Likewise, the \textit{Thumb/Index} metric improved from \(0.75\) to \(0.75\), \(0.76\), and \(0.78\). Although the improvement becomes smaller at larger output dimensions, higher-dimensional Tea representations still provide more stable classification performance across multiple evaluation tasks.
 
-A similar trend can also be observed for the \((32, 16)\) segmentation configuration. When \textit{Tea Out}=32, the model achieved only \(0.66\) validation accuracy with a validation loss of \(0.75\). Increasing the output dimension to 64 improved the validation accuracy to \(0.81\), while \textit{Tea Out}=128 and 256 further improved the validation accuracy to \(0.84\) and \(0.86\), respectively. Correspondingly, the validation loss decreased from \(0.75\) to \(0.42\), \(0.37\), and \(0.33\).
+The results suggest that increasing the output dimensionality enables each Tea branch to encode richer localized spiking features. Since the proposed architecture relies on parallel feature extraction from segmented fingerprint regions, larger feature representations provide additional flexibility for capturing subtle ridge patterns and spatial variations in capacitive fingerprint images.
 
-For smaller segmentation settings such as \((8, 2)\), the same behavior was observed. Validation accuracy improved progressively from \(0.79\) for \textit{Tea Out}=32 to \(0.82\), \(0.84\), and \(0.84\) for output dimensions of 64, 128, and 256, respectively. Although the performance gain became smaller at higher output dimensions, the larger Tea layers still produced more stable validation performance.
+However, increasing the \textit{Tea Out} dimension also substantially increases the number of trainable parameters, as shown in Table~\ref{tab:num-params}. For the \((16,8)\) configuration, the parameter count increased from \(7392\) at \textit{Tea Out}=32 to \(14784\), \(29568\), and \(59136\) for output dimensions of \(64\), \(128\), and \(256\), respectively. Similarly, under the \((8,4)\) configuration, the number of parameters increased from \(8160\) to \(16320\), \(32640\), and \(65280\).
 
-These results suggest that increasing the number of output neurons allows each Tea layer to encode richer localized spiking features. Since the proposed architecture relies on parallel feature extraction branches, larger output spaces provide additional representational flexibility for capturing subtle spatial variations in capacitive fingerprint patterns.
+Although larger output dimensions generally improve performance, the improvement becomes progressively smaller beyond \textit{Tea Out}=128. For example, under the \((16,8)\) configuration, increasing \textit{Tea Out} from \(128\) to \(256\) improved the \textit{Index L/R} score by only \(0.01\) (\(0.62 \rightarrow 0.63\)) and the \textit{Thumb L/R} score by only \(0.01\) (\(0.85 \rightarrow 0.86\)), while the number of trainable parameters doubled from \(29568\) to \(59136\). Similar diminishing returns can also be observed in the \((32,16)\) and \((8,2)\) configurations.
 
-However, increasing the \textit{Tea Out} parameter also leads to a substantial increase in model complexity. For the \((16, 8)\) configuration, the number of trainable parameters increased from \(7392\) at \textit{Tea Out}=32 to \(14784\), \(29568\), and \(59136\) for output dimensions of 64, 128, and 256, respectively. Similarly, for the \((8, 4)\) configuration, the parameter count increased from \(8160\) to \(16320\), \(32640\), and \(65280\).
-
-Although larger output dimensions generally improve performance, the improvement becomes progressively smaller beyond \textit{Tea Out}=128. For instance, under the \((16, 8)\) setting, increasing \textit{Tea Out} from 128 to 256 improved validation accuracy by only \(1\%\) (\(0.85 \rightarrow 0.86\)), while the number of parameters doubled from \(29568\) to \(59136\). This indicates diminishing returns in representational benefit at very large output dimensions.
-
-Overall, the experimental results demonstrate that the \textit{Tea Out} parameter plays a crucial role in balancing representational capacity and computational efficiency. Small output dimensions often lead to insufficient feature representation and reduced classification performance, while excessively large output dimensions substantially increase model complexity with only marginal performance improvement. Among the evaluated configurations, moderate-to-large output dimensions such as 128 and 256 provide the most favorable balance between accuracy and representational capability.
+Overall, the experimental results demonstrate that the \textit{Tea Out} parameter plays a critical role in balancing representational capability and computational complexity. Small output dimensions often lead to insufficient feature representation and reduced classification performance, while excessively large output dimensions significantly increase model complexity with relatively limited performance gain. Among the evaluated settings, moderate-to-large output dimensions such as \(128\) and \(256\) provide the most favorable balance between recognition accuracy and computational efficiency for the proposed parallel RANC-based SNN architecture.
 
 \subsection{Effect of Temporal Encoding Window}
 
@@ -143,46 +181,46 @@ Table~\ref{tab:timestep_results} summarizes the experimental results obtained un
 \begin{table}[h]
 \centering
 \caption{Performance of the proposed RANC-based SNN under different temporal encoding windows using the best segmentation configuration (\textit{Elems}=16, \textit{Overlap}=8, \textit{Tea Out}=256).}
+\resizebox{0.92\textwidth}{!}{
 \label{tab:timestep_results}
-\begin{tabular}{ccccc}
+\begin{tabular}{cccccc}
 \toprule
-\textbf{Time Steps (\(T\))} & \textbf{Tr. Acc.} & \textbf{Val. Acc.} & \textbf{Tr. Loss} & \textbf{Val. Loss} \\
+\textbf{Time Steps (\(T\))} & \textbf{Index L/R} & \textbf{Thumb L/R} & \textbf{Thumb/Index} & \textbf{Thumb/Others} & \textbf{5 Fingers} \\
 \midrule
-1  & 0.89 & 0.86 & 0.27 & 0.32 \\
-2  & 0.91 & 0.86 & 0.26 & 0.32 \\
-4  & 0.93 & 0.88 & 0.25 & 0.32 \\
-8  & 0.93 & 0.88 & 0.24 & 0.31 \\
+1  & 0.63 & 0.86 & 0.79 & 0.82 & 0.44\\
+2  & 0.63 & 0.87 & 0.80 & 0.83 & 0.45\\
+4  & 0.64 & 0.87 & 0.81 & 0.85 & 0.45\\
+8  & 0.65 & 0.89 & 0.82 & 0.86 & 0.46\\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
-The experimental results demonstrate that increasing the temporal encoding window generally improves the recognition capability of the proposed SNN architecture. As the number of time steps increased from \(T=1\) to \(T=4\), both training accuracy and validation accuracy improved consistently, while training loss decreased gradually.
+This experiment investigates the influence of the temporal encoding window on the recognition performance of the proposed RANC-based SNN architecture. The temporal encoding window, represented by the number of timesteps \(T\), determines how many temporal spike events are generated for each input sample during inference. Increasing the number of timesteps enables the network to accumulate richer temporal information and capture more discriminative spiking representations.
 
-Specifically, when using a single time step (\(T=1\)), corresponding to binary spike encoding, the model achieved a validation accuracy of \(0.86\) with a validation loss of \(0.32\). Increasing the encoding window to \(T=2\) improved the training accuracy from \(0.89\) to \(0.91\), although the validation accuracy remained unchanged at \(0.86\). This suggests that a small increase in temporal resolution allows the model to learn richer internal representations without yet producing a substantial improvement in generalization performance.
+The experiments were conducted using the best-performing segmentation configuration identified in previous experiments, namely \((\textit{Elems}=16, \textit{Overlap}=8, \textit{Tea Out}=256)\). The timestep values were varied from \(T=1\) to \(T=8\) in order to analyze the trade-off between recognition capability and temporal computational complexity.
 
-More noticeable improvement was observed when increasing the temporal window to \(T=4\). Under this configuration, the validation accuracy increased to \(0.88\), while the training loss decreased further to \(0.25\). These results indicate that additional temporal information enables the network to better capture subtle variations in capacitive fingerprint patterns through burst-based spike representations.
+The experimental results in Table~\ref{tab:timestep_results} demonstrate that increasing the temporal encoding window generally improves the classification performance across all evaluation tasks. In particular, larger timestep values consistently produced higher recognition scores for \textit{Index L/R}, \textit{Thumb L/R}, \textit{Thumb/Index}, \textit{Thumb/Others}, and \textit{5 Fingers} classification tasks.
 
-When the temporal window was further increased to \(T=8\), the validation accuracy remained at \(0.88\), while the validation loss decreased slightly from \(0.32\) to \(0.31\). The limited improvement between \(T=4\) and \(T=8\) suggests that the representational benefit of increasing temporal resolution gradually saturates beyond moderate time windows.
+When using a single timestep (\(T=1\)), corresponding to binary spike encoding without temporal accumulation, the model achieved scores of \(0.63\) for \textit{Index L/R}, \(0.86\) for \textit{Thumb L/R}, \(0.79\) for \textit{Thumb/Index}, \(0.82\) for \textit{Thumb/Others}, and \(0.44\) for the \textit{5 Fingers} task. These results indicate that even a single-step spiking representation is capable of learning meaningful fingerprint features.
 
-The selected temporal encoding settings were motivated by the timestep configurations commonly adopted in the original SpikeFormer \cite{zhou2023spikeformer} architecture, where small-to-moderate temporal windows such as \(T=1\), \(T=2\), \(T=4\), and \(T=8\) were shown to provide effective trade-offs between performance and computational efficiency. Following this experimental convention enables consistent comparison with existing spiking transformer literature while remaining suitable for lightweight neuromorphic computation.
+Increasing the temporal window to \(T=2\) produced small but consistent improvements across multiple tasks. The \textit{Thumb L/R} score increased from \(0.86\) to \(0.87\), while \textit{Thumb/Index} improved from \(0.79\) to \(0.80\), and \textit{Thumb/Others} improved from \(0.82\) to \(0.83\). The \textit{5 Fingers} score also increased slightly from \(0.44\) to \(0.45\). These improvements suggest that introducing additional temporal spike events allows the network to construct richer internal spiking representations.
 
-In addition, larger temporal windows were not extensively explored in this work because preliminary experiments indicated diminishing performance gains at high timestep values. In particular, although configurations such as \(T=16\) produced accuracy levels approaching those of conventional CNN-based approaches, the improvement over \(T=4\) and \(T=8\) was relatively small compared to the additional computational cost and inference latency introduced by longer spike sequences.
+More noticeable performance improvement was observed when increasing the timestep value to \(T=4\). Under this configuration, the \textit{Index L/R} score improved to \(0.64\), while \textit{Thumb/Index} and \textit{Thumb/Others} increased to \(0.81\) and \(0.85\), respectively. The results indicate that moderate temporal windows enable the proposed SNN architecture to better capture subtle spatial and temporal variations in capacitive fingerprint patterns through burst-based spike encoding.
 
-Overall, the experimental results demonstrate that temporal encoding plays an important role in improving the discriminative capability of the proposed SNN architecture. Moderate temporal windows such as \(T=4\) and \(T=8\) provide the most favorable balance between recognition performance and computational efficiency, while excessively large timestep values introduce higher computational overhead with limited additional benefit.
+The best overall performance was obtained when using \(T=8\). Under this configuration, the model achieved \(0.65\) for \textit{Index L/R}, \(0.89\) for \textit{Thumb L/R}, \(0.82\) for \textit{Thumb/Index}, \(0.86\) for \textit{Thumb/Others}, and \(0.46\) for the \textit{5 Fingers} task. Compared to the \(T=1\) configuration, the improvements demonstrate that longer temporal windows enable the network to accumulate more stable and discriminative spike-based feature representations.
+
+The selected timestep settings were motivated by commonly adopted temporal configurations in SpikeFormer~\cite{zhou2023spikeformer} and related spiking transformer architectures, where small-to-moderate temporal windows such as \(T=1\), \(T=2\), \(T=4\), and \(T=8\) were shown to provide effective trade-offs between recognition performance and computational efficiency. Following this experimental convention enables more consistent comparison with existing spiking transformer literature while remaining suitable for lightweight neuromorphic computation.
+
+Although increasing the timestep value generally improves performance, larger temporal windows also introduce additional computational overhead and inference latency because spike-based operations must be performed repeatedly across multiple timesteps. Moreover, the performance improvement gradually becomes smaller at higher timestep values. For example, increasing the timestep from \(T=4\) to \(T=8\) improved the \textit{Thumb/Index} score by only \(0.01\) and the \textit{5 Fingers} score by only \(0.01\). This behavior suggests diminishing representational benefits at very large temporal windows.
+
+Overall, the experimental results demonstrate that temporal encoding plays an important role in improving the discriminative capability of the proposed SNN architecture. Moderate temporal windows such as \(T=4\) and \(T=8\) provide the most favorable balance between recognition performance and computational efficiency, while excessively large timestep values may introduce significantly higher computational cost with relatively limited additional performance improvement.
 
 \subsection{Discussion}
 
-The experimental results demonstrate that the proposed RANC-based SNN architecture is highly sensitive to both spatial segmentation design and temporal encoding configuration. In particular, the parallel segmentation strategy plays a critical role in balancing localized feature extraction and spatial continuity preservation. Configurations using moderate segment sizes with sufficient overlap, especially the \((16,8)\) setting, consistently achieved the best trade-off between validation accuracy and model complexity across different experiments.
+The experimental results demonstrate that both spatial segmentation and temporal encoding significantly influence the performance of the proposed RANC-based SNN architecture. Among the evaluated segmentation settings, the \((16,8)\) configuration consistently achieved the best balance between recognition accuracy and model complexity, indicating that moderate segment sizes with sufficient overlap are effective for preserving local spatial continuity. Increasing the \textit{Tea Out} dimension generally improved classification performance by enabling richer spiking feature representations, although the improvement gradually saturated at higher output dimensions. In particular, increasing \textit{Tea Out} from \(128\) to \(256\) produced only marginal performance gains while substantially increasing the number of trainable parameters. 
 
-The results further show that increasing the representational capacity of Tea layers through larger \textit{Tea Out} values improves classification performance by enabling richer spiking feature representations. However, the improvement gradually saturates at high output dimensions. For example, increasing \textit{Tea Out} from 128 to 256 only improved validation accuracy from \(0.85\) to \(0.86\) under the \((16,8)\) configuration, while doubling the number of trainable parameters. This suggests that excessively large Tea layers may introduce unnecessary computational overhead with limited practical benefit.
-
-The temporal encoding experiments also confirm the importance of temporal information in spike-based computation. Increasing the encoding window from \(T=1\) to \(T=4\) improved validation accuracy from \(0.86\) to \(0.88\), demonstrating that burst-based temporal representations allow the network to capture more discriminative fingerprint patterns. Nevertheless, the performance gain became marginal beyond moderate timestep values, indicating diminishing returns for large temporal windows.
-
-Another important observation is that the proposed architecture achieves competitive recognition performance while maintaining relatively lightweight model complexity compared to conventional deep learning approaches. The use of binary spike representations, discretized Tea connections, and parallel localized processing contributes to efficient neuromorphic-compatible computation without severely compromising classification accuracy.
-
-Overall, the experiments validate the effectiveness of combining overlapping parallel segmentation with temporal spike encoding for capacitive fingerprint classification. The results indicate that carefully selected architectural parameters allow the proposed SNN to achieve a favorable balance between recognition performance, representational capability, and computational efficiency.
-
-Finally, the findings also suggest that moderate temporal resolutions and moderate network capacities are generally sufficient for this task. This characteristic is particularly important for resource-constrained neuromorphic systems, where reducing inference latency and computational cost is often as critical as maximizing classification accuracy.
+The temporal encoding experiments further confirmed the importance of temporal spike accumulation in enhancing discriminative capability. Increasing the timestep value from \(T=1\) to \(T=8\) consistently improved recognition performance across all evaluation tasks, demonstrating the effectiveness of burst-based spike encoding for capacitive fingerprint classification. However, the improvement became progressively smaller at larger timestep values, suggesting diminishing returns beyond moderate temporal resolutions. In addition, the proposed architecture maintained relatively lightweight computational complexity while achieving competitive recognition performance through binary spike representations, discretized Tea connections, and localized parallel processing. Overall, the experimental findings validate the effectiveness of combining overlapping parallel segmentation with temporal spike encoding to achieve an efficient balance between recognition capability, representational power, and neuromorphic computational efficiency.
 
 \section{Experimental Evaluation of Spiking Vision Transformer}
 \subsection{Experimental Setup}
