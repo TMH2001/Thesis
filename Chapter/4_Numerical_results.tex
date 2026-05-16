@@ -2,17 +2,10 @@
 \begin{document}
 
 \section{Experimental Evaluation of RANC-based SNN}
+\label{sec:Experimental-Evaluation-of-RANC-based-SNN}
 \subsection{Experimental Setup}
 
 This section presents the experimental configuration used to evaluate the proposed RANC-based Spiking Neural Network (SNN). The experiments were designed to investigate the effects of temporal encoding and architectural parameters on both recognition performance and model complexity.
-
-\subsubsection{Training Configuration}
-
-The proposed SNN was implemented using the TensorFlow framework and trained using the Adam optimizer with an initial learning rate of \(0.001\). The model was trained for a maximum of 300 epochs using categorical cross-entropy as the optimization objective for multi-class classification.
-
-To prevent overfitting and reduce unnecessary computation, early stopping was employed with a patience value of 10 epochs based on the validation loss. In addition, dropout with a rate of \(0.15\) was applied after each Tea layer to improve the generalization capability of the model.
-
-During training, differentiable approximations were adopted for discrete spiking operations. Specifically, the spike generation process was approximated using a sigmoid activation function to enable gradient propagation, while the binary connection masks of Tea layers were trained as continuous-valued parameters and discretized during inference.
 
 \subsubsection{Experimental Settings}
 
@@ -223,6 +216,41 @@ The experimental results demonstrate that both spatial segmentation and temporal
 The temporal encoding experiments further confirmed the importance of temporal spike accumulation in enhancing discriminative capability. Increasing the timestep value from \(T=1\) to \(T=8\) consistently improved recognition performance across all evaluation tasks, demonstrating the effectiveness of burst-based spike encoding for capacitive fingerprint classification. However, the improvement became progressively smaller at larger timestep values, suggesting diminishing returns beyond moderate temporal resolutions. In addition, the proposed architecture maintained relatively lightweight computational complexity while achieving competitive recognition performance through binary spike representations, discretized Tea connections, and localized parallel processing. Overall, the experimental findings validate the effectiveness of combining overlapping parallel segmentation with temporal spike encoding to achieve an efficient balance between recognition capability, representational power, and neuromorphic computational efficiency.
 
 \section{Experimental Evaluation of Spiking Vision Transformer}
+
 \subsection{Experimental Setup}
+
+This section presents the experimental configuration used to evaluate the proposed Spiking Vision Transformer architecture. Similar to the previous RANC-based experiments, the evaluation focuses on both recognition performance and model complexity under different architectural and temporal configurations.
+
+The experiments investigate the influence of three primary parameter groups adopted from the original SpikeFormer design \cite{zhou2023spikeformer}:
+
+\begin{itemize}
+    \item \textbf{Number of Spiking Transformer Encoder blocks (\(L\))}, which controls the network depth.
+    
+    \item \textbf{Feature embedding dimension (\(D\))}, which determines the representational capacity of the transformer features.
+    
+    \item \textbf{Temporal encoding window (\(T\))}, which controls the number of spike propagation timesteps.
+\end{itemize}
+
+To ensure fair comparison, only one parameter group was varied at a time while the remaining settings were fixed to their default configuration. The experiments were evaluated using the same fingerprint classification tasks and performance metrics described in the previous subsection, including \textit{Index L/R}, \textit{Thumb L/R}, \textit{Thumb/Index}, \textit{Thumb/Others}, and \textit{5 Fingers} classification accuracy.
+
+The default configuration of the proposed Spiking Vision Transformer is summarized in Table~\ref{tab:spikformer_default_config}.
+
+\begin{table}[h]
+\centering
+\caption{Default configuration of the proposed Spiking Vision Transformer}
+\label{tab:spikformer_default_config}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Parameter} & \textbf{Value} \\ \hline
+Optimizer & Adam \\ \hline
+Learning Rate & 0.001 \\ \hline
+Maximum Epochs & 300 \\ \hline
+Early Stopping Patience & 10 \\ \hline
+Dropout Rate & 0.15 \\ \hline
+Encoder Blocks (\(L\)) & 8 \\ \hline
+Embedding Dimension (\(D\)) & 512 \\ \hline
+Encoding Window (\(T\)) & 4 \\ \hline
+\end{tabular}
+\end{table}
 
 \end{document}
