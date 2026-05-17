@@ -44,7 +44,6 @@ The primary objectives of this thesis are as follows:
 
 \begin{enumerate}[label=\Roman*.]
     % \item \textbf{To explore and exploit the CapfingerId dataset effectively}: The CapfingerId dataset presents unique challenges due to its capacitive sensing nature, including noise, variability, and limited data diversity. This work aims to propose suitable data preprocessing, augmentation, and feature extraction methods to enhance the quality and usability of the dataset for deep learning models.
-    \item \textbf{To develop a Convolutional Neural Network (CNN) for fingerprint recognition}: A baseline CNN architecture will be designed and optimized to address the fingerprint recognition problem. This model serves as a performance benchmark in terms of accuracy and computational cost.
     \item \textbf{To design a Spiking Neural Network (SNN) based on the RANC framework}: The model is constructed by following the structural principles and design guidelines suggested in RANC, ensuring consistency in the implementation and evaluation of all SNN-based approaches in this work.
     \item \textbf{To extend Vision Transformer (ViT) architectures to the spiking domain
     }: This objective explores the feasibility of integrating transformer-based models into SNN frameworks. A spiking version of Vision Transformer (Spiking ViT) will be proposed to capture long-range dependencies in fingerprint images while maintaining low energy consumption.
@@ -54,7 +53,6 @@ The primary objectives of this thesis are as follows:
 This thesis makes the following main contributions:
 \begin{enumerate}[label=\Roman*.]
     % \item A data processing pipeline for the CapfingerId dataset.
-    \item A CNN-based baseline model for fingerprint recognition.
     \item A SNN model based on the RANC framework.
     \item A Spiking Vision Transformer.
 \end{enumerate}
@@ -62,13 +60,25 @@ This thesis makes the following main contributions:
 \section{Organization of Thesis}
 The remainder of this thesis is organized as follows.
 
-Chapter 2 presents the problem context and fundamental background knowledge relevant to this thesis. It begins by defining the scope of the research to clarify the problem setting and objectives. This chapter also introduces the CapfingerId dataset, which serves as the primary dataset used throughout this thesis, along with its characteristics and associated challenges. Furthermore, the theoretical foundations of Convolutional Neural Networks (CNNs) and Transformer-based models are presented, focusing on their roles in feature extraction and representation learning. In addition, an overview of Spiking Neural Networks (SNNs) is provided, emphasizing their computational principles and advantages in energy-efficient processing. Finally, the chapter introduces the RANC framework, which is adopted as the main framework for designing and implementing SNN models throughout this thesis.
+Chapter 2 presents the problem context and theoretical foundations relevant to this thesis. 
+It begins by defining the research scope, including the capacitive fingerprint classification task, problem formulation, evaluation metrics, and existing research challenges. 
+The chapter then reviews related works on capacitive fingerprint recognition and introduces the CapFingerId dataset, which serves as the primary benchmark throughout this study. 
+In addition, the chapter provides an overview of Spiking Neural Networks (SNNs), including neuron models, spike encoding methods, and their advantages for energy-efficient computing. 
+The RANC framework is subsequently introduced as the hardware-aware neuromorphic architecture considered for the proposed SNN design. 
+Finally, the chapter presents the theoretical background of Vision Transformers (ViTs) and Spiking Vision Transformers (SNN-ViTs), highlighting their potential for learning robust spatial representations from low-resolution capacitive images while maintaining energy-efficient processing.
 
-% Chapter 3 presents the main methodologies of this thesis. Specifically, it first introduces several methods for processing and exploiting the CapfingerId dataset. Next, a Convolutional Neural Network (CNN) is designed based on the original reference model, alongside a Spiking Neural Network (SNN) developed using the RANC framework. Finally, this chapter explores existing studies and technical reports to design a Spiking Vision Transformer (SNN-ViT), aiming to integrate transformer-based architectures into the spiking domain.
-Chapter 3 presents the core methodologies of this thesis, with an emphasis on model architecture design. A baseline Convolutional Neural Network (CNN) is first established as a reference, followed by the formulation of a Spiking Neural Network (SNN) within the RANC framework to leverage event-driven computation. The chapter then extends this design space by incorporating transformer-based global attention through a Spiking Vision Transformer (SNN-ViT). This unified framework enables a direct and consistent evaluation of CNN, SNN, and spiking transformer architectures.
-Chapter 4 presents the experimental evaluation, including quantitative analyses to compare the performance of different models. Specifically, this chapter focuses on assessing and comparing the effectiveness of CNN, SNN, and SNN-ViT models in terms of accuracy and energy efficiency.
+Chapter 3 presents the proposed methodologies and architectures for capacitive image-based fingerprint recognition. 
+The chapter first introduces a RANC-based Spiking Neural Network (SNN) that employs burst encoding, overlapping segmentation, Tea layers, and spike-based aggregation for efficient spatio-temporal feature extraction. 
+It then presents a Spiking Vision Transformer (Spiking ViT) based on the SpikeFormer framework, incorporating Spiking Patch Splitting (SPS) and Spiking Self-Attention (SSA) to model global dependencies in spike-based representations. 
+In addition, the chapter describes the input encoding process, training strategy, and key architectural design choices for both models.
 
-Chapter 5 concludes the thesis by summarizing the main findings and discussing the achieved results. It also provides insights into the limitations of the current work and proposes directions for future research. In particular, future work will emphasize the deployment of Spiking Neural Network (SNN) models on hardware platforms to fully exploit their potential for energy-efficient computation.
+Chapter 4 presents the experimental evaluation of the proposed RANC-based Spiking Neural Network (SNN) and Spiking Vision Transformer (SNN-ViT) architectures for capacitive fingerprint recognition. 
+The experiments analyze the effects of spatial segmentation, Tea layer output dimensionality, transformer depth, embedding dimension, and temporal encoding windows on recognition performance and model complexity. 
+The results show that overlapping segmentation and temporal spike encoding improve the effectiveness of the RANC-based SNN, while deeper transformer structures and larger embedding dimensions enhance the global feature modeling capability of the SNN-ViT. 
+Overall, the experimental findings demonstrate the effectiveness of combining spiking computation, temporal encoding, and transformer-based attention mechanisms for efficient and accurate capacitive fingerprint recognition.
 
+Chapter 5 concludes the thesis by summarizing the main findings and discussing the achieved results. 
+It also provides insights into the limitations of the current work and proposes directions for future research. 
+In particular, future work will emphasize the deployment of Spiking Neural Network (SNN) models on hardware platforms to fully exploit their potential for energy-efficient computation.
 
 \end{document}

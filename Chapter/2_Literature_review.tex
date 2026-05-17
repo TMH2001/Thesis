@@ -179,11 +179,6 @@ Similarly, the \textbf{Adaptive LIF (ALIF) model} incorporates dynamic threshold
 At the other end of the spectrum, biologically detailed models such as the \textbf{Izhikevich and Hodgkin--Huxley neurons} provide highly accurate representations of neuronal behavior. These models are capable of reproducing a wide range of spiking patterns observed in biological systems. However, their high computational cost and complex dynamics make them impractical for large-scale deep learning applications, particularly in vision-based tasks \cite{izhikevich2003simple, hodgkin1952quantitative}.
 
 Considering the trade-offs discussed above, the \textbf{Leaky Integrate-and-Fire (LIF) neuron} is adopted in this work due to its balance between computational efficiency and temporal modeling capability. Its simple formulation enables efficient implementation and stable training using surrogate gradient methods, which is crucial for large-scale deep SNN architectures. While more advanced neuron models offer greater expressiveness, they often introduce unnecessary complexity for the scope of this study. Therefore, LIF is selected to ensure scalability and efficiency, with further exploration of more sophisticated neuron dynamics left for future work.
-\subsubsection{Training Methods}
-
-% Training SNNs remains a challenging problem due to the non-differentiable nature of spike generation. Two primary approaches have been proposed in the literature. The first approach is ANN-to-SNN conversion, where a pre-trained ANN is converted into an equivalent SNN by mapping activation values to firing rates. While this method preserves accuracy, it often introduces latency due to the need for long simulation time steps.
-
-% The second approach is direct training, which applies backpropagation techniques to SNNs using surrogate gradients to approximate the non-differentiable spike function. This method enables end-to-end learning and has shown promising results in recent studies. In this thesis, direct training is particularly relevant for advanced architectures such as SNN-based Vision Transformers.
 
 \subsubsection{Advantages and Challenges}
 
@@ -218,7 +213,6 @@ In the RANC\cite{RANC} ecosystem, the mapping of neurons and synapses is impleme
 \end{itemize}
 
 Through the optimization of core sizes to fully utilize BRAM primitives on the Alveo U250 FPGA, the architecture can scale to emulate as many as 259,072 distinct neurons and over 73.3 million distinct synapses on a single hardware device.
-\subsubsection{Communication Mechanism}
 
 \subsubsection{Reconfigurability and Flexibility}
 

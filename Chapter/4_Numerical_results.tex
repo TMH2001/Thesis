@@ -1,6 +1,8 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 
+This chapter presents the experimental evaluation of the proposed RANC-based Spiking Neural Network (SNN) and Spiking Vision Transformer (Spiking ViT) architectures for capacitive fingerprint recognition. The experiments investigate the influence of spatial segmentation, Tea layer output dimensionality, transformer depth, embedding dimension, and temporal encoding windows on both recognition performance and model complexity. For the RANC-based SNN, the results demonstrate that overlapping parallel segmentation and moderate temporal encoding significantly improve classification accuracy while maintaining lightweight computational complexity. In particular, the \((\textit{Elems}=16, \textit{Overlap}=8)\) configuration achieved the most favorable balance between recognition capability and parameter efficiency. The experiments further show that increasing the temporal encoding window improves spike-based feature representation, although the performance gain gradually saturates at larger timestep values. For the Spiking Vision Transformer, deeper encoder structures and larger embedding dimensions consistently improved classification performance through enhanced global feature modeling. Overall, the experimental findings validate the effectiveness of combining spiking computation, temporal encoding, and transformer-based attention mechanisms for efficient and accurate capacitive fingerprint recognition.
+
 \section{Experimental Evaluation of RANC-based SNN}
 \label{sec:Experimental-Evaluation-of-RANC-based-SNN}
 \subsection{Experimental Setup}
@@ -46,7 +48,7 @@ This experiment investigates the effect of the proposed parallel segmentation st
 
 The objective of this experiment is to evaluate how different segmentation configurations influence feature extraction capability, spatial continuity preservation, and model complexity. Different combinations of segment size and overlap were therefore explored while monitoring both classification performance and the number of trainable parameters.
 
-Table~\ref{tab:results} summarizes the experimental results obtained for different model configurations.
+Table~\ref{tab:ranc-results} summarizes the experimental results obtained for different model configurations.
 
 \begin{table*}[t]
 \centering
@@ -85,7 +87,7 @@ Elems & Overlap & Tea Out & & & & &\\
 \bottomrule  
 \end{tabular}
 }
-\label{tab:results}
+\label{tab:ranc-results}
 \end{table*}
 
 \begin{table*}[t]
@@ -147,7 +149,7 @@ This experiment investigates the influence of the \textit{Tea Out} parameter on 
 
 The experiments were conducted under multiple segmentation configurations while varying the \textit{Tea Out} dimension among \(32\), \(64\), \(128\), and \(256\). The objective is to analyze the trade-off between classification performance and model complexity as the output dimensionality increases.
 
-The experimental results in Table~\ref{tab:results} show that increasing the \textit{Tea Out} dimension generally improves recognition performance across all evaluation tasks. In most configurations, larger output dimensions consistently achieved higher scores for \textit{Index L/R}, \textit{Thumb L/R}, \textit{Thumb/Index}, \textit{Thumb/Others}, and \textit{5 Fingers} classification tasks.
+The experimental results in Table~\ref{tab:ranc-results} show that increasing the \textit{Tea Out} dimension generally improves recognition performance across all evaluation tasks. In most configurations, larger output dimensions consistently achieved higher scores for \textit{Index L/R}, \textit{Thumb L/R}, \textit{Thumb/Index}, \textit{Thumb/Others}, and \textit{5 Fingers} classification tasks.
 
 For the \((16,8)\) segmentation configuration, increasing \textit{Tea Out} from \(32\) to \(64\), \(128\), and \(256\) improved the \textit{Index L/R} score from \(0.57\) to \(0.60\), \(0.62\), and \(0.63\), respectively. Similarly, the \textit{Thumb L/R} performance increased from \(0.80\) to \(0.84\), \(0.85\), and finally \(0.86\). The \textit{5 Fingers} evaluation also improved from \(0.40\) to \(0.42\), \(0.41\), and \(0.44\). These results indicate that larger Tea representations enable the model to capture richer local fingerprint structures and improve classification robustness.
 
@@ -253,4 +255,88 @@ Encoding Window (\(T\)) & 4 \\ \hline
 \end{tabular}
 \end{table}
 
+\subsection{Effect of Number of Encoder Blocks}
+
+Table~\ref{tab:spikeformer-results} presents the experimental results obtained under different Spiking Vision Transformer configurations with varying encoder depths and embedding dimensions. The results demonstrate that increasing the number of encoder blocks generally improves the recognition capability of the proposed architecture by enabling deeper hierarchical spike-based feature extraction.
+
+Compared with the baseline model, all Spiking Vision Transformer configurations achieved noticeable performance improvements across most classification tasks. In particular, the configuration using \(8\) encoder blocks and embedding dimension \(384\) improved the \textit{Thumb L/R} accuracy from \(0.90\) to \(0.92\), while also improving the \textit{Thumb/Index} accuracy from \(0.84\) to \(0.86\). These results indicate that the transformer-based spiking representation is capable of learning more discriminative spatial relationships than the baseline architecture.
+
+When the embedding dimension was fixed at \(D=512\), increasing the number of encoder blocks from \(L=6\) to \(L=8\) consistently improved performance across all evaluation tasks. Specifically, \textit{Index L/R} accuracy increased from \(0.67\) to \(0.70\), while \textit{Thumb/Others} accuracy improved from \(0.87\) to \(0.90\). This behavior suggests that deeper transformer structures allow the network to capture richer contextual dependencies between fingerprint regions through multiple stages of spike-based self-attention.
+
+Further increasing the encoder depth to \(L=10\) produced additional improvement in several tasks. Under the \((L=10, D=512)\) configuration, the model achieved the highest \textit{Thumb/Others} accuracy of \(0.92\) and the best \textit{5 Fingers} classification accuracy of \(0.48\). These results demonstrate that deeper spiking transformer architectures are particularly beneficial for more challenging multi-class classification scenarios requiring stronger global feature aggregation.
+
+The results also indicate that the improvement gradually saturates at higher model capacities. Although the \(L=10\) configuration outperformed shallower models in some tasks, the performance gain compared with \(L=8\) remained relatively small. This suggests that excessively deep transformer architectures may introduce additional computational complexity while providing only marginal improvement in recognition capability.
+
+Overall, the experiments confirm that encoder depth plays an important role in the representational power of the proposed Spiking Vision Transformer. Moderate-to-deep configurations, particularly those using \(8\) to \(10\) encoder blocks, provide the most favorable balance between classification performance and architectural complexity for capacitive fingerprint recognition.
+
+\begin{table*}[t]
+\centering
+\caption{Performance of Spiking Vision Transformer under different encoder depth and embedding dimension configurations (\(T=4\)).}
+\resizebox{1\textwidth}{!}{
+\begin{tabular}{ccccccc}
+\toprule
+\multicolumn{2}{c}{\textbf{Architecture}} & \textbf{Index L/R} & \textbf{Thumb L/R} & \textbf{Thumb/Index} & \textbf{Thumb/Others} & \textbf{5 Fingers}\\
+\cmidrule(lr){1-2}
+Encoder Blocks (\(L\)) & Embedding Dimension (\(D\)) & & & & &\\
+\midrule
+\multicolumn{2}{c}{Baseline Model} & 0.65 & 0.90 & 0.84 & 0.86 & 0.46 \\
+8 & 384 & 0.65 & 0.92 & 0.86 & 0.86 & 0.45 \\
+6 & 512 & 0.67 & 0.92 & 0.87 & 0.87 & 0.45 \\
+8 & 512 & 0.70 & 0.94 & 0.89 & 0.90 & 0.46 \\
+10 & 512 & 0.70 & 0.94 & 0.89 & \textbf{0.92} & \textbf{0.48} \\
+8 & 768 & \textbf{0.71} & \textbf{0.95} & \textbf{0.90} & 0.92 & 0.47 \\
+\bottomrule  
+\end{tabular}
+}
+\label{tab:spikeformer-results}
+\end{table*}
+
+\subsection{Effect of Changing Embedding Dimensions}
+
+The experimental results further demonstrate that the embedding dimension significantly affects the representational capability of the proposed Spiking Vision Transformer. Increasing the embedding dimension generally improved classification performance across most evaluation tasks by allowing the network to encode richer spike-based feature representations.
+
+When the number of encoder blocks was fixed at \(L=8\), increasing the embedding dimension from \(D=384\) to \(D=512\) consistently improved recognition accuracy. In particular, \textit{Index L/R} accuracy increased from \(0.65\) to \(0.70\), while \textit{Thumb/Others} accuracy improved from \(0.86\) to \(0.90\). Similarly, the \textit{Thumb/Index} classification accuracy increased from \(0.86\) to \(0.89\). These improvements indicate that larger embedding spaces enable the transformer to preserve more discriminative spatial and temporal spike features.
+
+Further increasing the embedding dimension to \(D=768\) produced the best overall performance in several classification tasks. Under the \((L=8, D=768)\) configuration, the model achieved the highest \textit{Index L/R} accuracy of \(0.71\), the highest \textit{Thumb L/R} accuracy of \(0.95\), and the best \textit{Thumb/Index} accuracy of \(0.90\). These results suggest that larger embedding dimensions improve the ability of the self-attention mechanism to model complex relationships between fingerprint regions.
+
+However, the experimental results also indicate diminishing performance gains at very large embedding dimensions. Although the \(D=768\) configuration achieved slightly better performance than \(D=512\), the improvement remained relatively modest in several tasks. For example, the \textit{Thumb/Others} accuracy remained unchanged at \(0.92\), while the \textit{5 Fingers} accuracy improved only marginally from \(0.46\) to \(0.47\). This suggests that increasing embedding dimensionality beyond moderate values may introduce additional computational overhead with limited practical benefit.
+
+Compared with the baseline model, all transformer-based configurations achieved substantially higher performance, demonstrating the effectiveness of spike-based transformer representations for capacitive fingerprint recognition. The results confirm that larger embedding dimensions improve feature diversity and contextual representation learning within the spiking self-attention framework.
+
+Overall, the experiments show that embedding dimension is a critical factor influencing the representational capacity of the Spiking Vision Transformer. Moderate-to-large embedding dimensions, particularly \(D=512\) and \(D=768\), provide the most favorable balance between recognition performance and architectural efficiency.
+
+\subsection{Effect of Temporal Encoding Window}
+
+\begin{table*}[t]
+\centering
+\caption{Performance of the Spiking Vision Transformer under Different Temporal Encoding Windows.}
+\resizebox{1\textwidth}{!}{
+\begin{tabular}{cccccc}
+\toprule
+Time Step & \textbf{Index L/R} & \textbf{Thumb L/R} & \textbf{Thumb/Index} & \textbf{Thumb/Others} & \textbf{5 Fingers}\\
+\midrule
+Baseline Model & 0.65 & 0.90 & 0.84 & 0.86 & 0.46 \\
+1 & 0.65 & 0.89 & 0.86 & 0.86 & 0.45 \\
+2 & 0.67 & 0.92 & 0.87 & 0.86 & 0.46 \\
+4 & 0.70 & 0.95 & 0.89 & 0.89 & 0.48 \\
+8 & \textbf{0.71} & \textbf{0.95} & \textbf{0.90} & \textbf{0.90} & \textbf{0.48} \\
+\bottomrule  
+\end{tabular}
+}
+\label{tab:spikeformer-timestep-results}
+\end{table*}
+
+This experiment investigates the influence of temporal encoding on the proposed Spiking Vision Transformer. To ensure fair comparison across different temporal resolutions, all timestep experiments were conducted using the same transformer configuration with \(L=8\) encoder blocks and embedding dimension \(D=512\), while only the number of encoding timesteps was varied.
+
+The experimental results demonstrate that increasing the temporal encoding window generally improves the recognition capability of the proposed architecture. Compared with the baseline model, all spiking transformer configurations achieved competitive or superior performance across most evaluation tasks, indicating that temporal spike-based processing effectively enhances feature representation learning.
+
+When using a single timestep (\(T=1\)), the model achieved \(0.89\) accuracy for the \textit{Thumb L/R} task and \(0.86\) for \textit{Thumb/Index}. Although the performance remained comparable to the baseline model, the limited temporal resolution restricted the ability of the network to fully exploit temporal spike dynamics.
+
+Increasing the timestep to \(T=2\) produced consistent improvements across several tasks. In particular, \textit{Index L/R} accuracy improved from \(0.65\) to \(0.67\), while \textit{Thumb L/R} increased from \(0.89\) to \(0.92\). These results suggest that introducing additional temporal information enables the transformer to learn richer spike-based contextual representations.
+
+More significant improvement was observed when increasing the temporal window to \(T=4\). Under this configuration, the model achieved \(0.70\) accuracy for \textit{Index L/R}, \(0.95\) for \textit{Thumb L/R}, and \(0.89\) for both \textit{Thumb/Index} and \textit{Thumb/Others}. The \textit{5 Fingers} classification accuracy also increased to \(0.48\), outperforming the baseline model. These results indicate that moderate temporal windows allow the spiking transformer to better capture temporal correlations and subtle fingerprint variations.
+
+Further increasing the temporal window to \(T=8\) produced only marginal improvement. Although the model achieved the best overall performance, including \(0.71\) for \textit{Index L/R} and \(0.90\) for both \textit{Thumb/Index} and \textit{Thumb/Others}, the improvement over \(T=4\) remained relatively small. This behavior suggests diminishing returns at higher timestep values, where additional temporal information contributes limited representational benefit.
+
+Overall, the experiments confirm that temporal encoding plays a crucial role in the performance of the proposed Spiking Vision Transformer. Moderate timestep values such as \(T=4\) and \(T=8\) provide the most favorable balance between recognition accuracy and computational efficiency, while excessively small temporal windows limit the ability of the network to exploit spike-based temporal dynamics effectively.
 \end{document}
