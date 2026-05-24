@@ -3,10 +3,87 @@
 
 \section{Summary}
 
-Sinh viên nhắc lại các vấn đề mà đồ án đã giải quyết được, cũng như những vấn đề còn tồn đọng của đồ án.  
+This thesis investigated the development of energy-efficient deep learning models
+for capacitive image-based finger classification, with a particular emphasis on
+Spiking Neural Networks (SNNs) as a viable alternative to conventional
+convolutional and transformer-based approaches. The work was motivated by the
+growing need for context-aware, low-power sensing in mobile and wearable devices,
+where continuous finger-type recognition must operate within tight energy and
+computational budgets.
 
-\section{Suggestion for Future Works }
+Two distinct SNN-based architectures were proposed and evaluated on the
+CapFingerId dataset. The first is a RANC-based SNN, designed as a fully spiking
+architecture compatible with neuromorphic hardware platforms. The model employs
+burst encoding to convert static capacitive images into spatiotemporal spike trains,
+processes the encoded input through parallel overlapping segments via Tea layers,
+and aggregates spiking activity using additive pooling for classification.
+Experimental evaluation demonstrated that the proposed segmentation strategy ---
+particularly the (\texttt{Elems=16}, \texttt{Overlap=8}) configuration --- achieves
+the most favorable balance between recognition accuracy and model parameter
+efficiency. The temporal encoding experiments further confirmed that moderate
+timestep values ($T = 4$ to $T = 8$) provide meaningful performance gains, while
+larger windows yield diminishing returns relative to their additional computational
+cost. Overall, the RANC-based SNN achieved competitive accuracy compared to the
+CNN baseline from the original CapFingerId study, while operating with
+significantly fewer parameters and a neuromorphic-compatible design.
 
-Sinh viên đề xuất hướng phát triển trong tương lai (nếu có) .  
+The second proposed architecture is a Spiking Vision Transformer (Spiking ViT),
+built upon the SpikeFormer framework. This model integrates a Spiking Patch
+Splitting (SPS) module for feature embedding and a Spiking Self-Attention (SSA)
+mechanism to capture global spatial dependencies within the spike domain. By
+adapting the encoder depth and embedding dimensions to suit the low-resolution
+nature of capacitive data, the proposed Spiking ViT demonstrated consistent
+improvement over the CapFingerId baseline across all evaluated classification tasks.
+Notably, the best-performing configuration ($L = 8$, $D = 768$, $T = 4$) achieved
+a Thumb L/R accuracy of $0.95$ and a Thumb/Index accuracy of $0.90$,
+representing approximately $6\%$ improvement over the baseline model. The
+experimental analysis showed that deeper encoder structures and larger embedding
+dimensions generally improve performance, though gains saturate at high model
+capacities, reinforcing the importance of selecting a balanced architecture.
+
+Together, the results validate that SNN-based architectures --- particularly those
+incorporating transformer-level attention mechanisms --- are capable of efficient and
+accurate finger-type recognition from capacitive images. The event-driven and
+sparse computation inherent to SNNs makes these models well-suited for deployment
+on edge devices where energy constraints are critical.
+
+Despite these contributions, the work has several limitations that should be
+acknowledged. First, the actual deployment of the proposed RANC-based SNN on
+FPGA hardware was beyond the scope of this thesis; the energy efficiency gains from
+neuromorphic hardware therefore remain to be empirically verified. Second, the
+Spiking ViT adopts a hybrid CNN-SNN design in its SPS module, which introduces
+some non-spiking operations and partially limits the full spike-driven computation
+ideal for neuromorphic hardware. Third, the study focused exclusively on tap
+interactions from the CapFingerId dataset; generalization to dynamic gestures such
+as swipes and scrolls was not evaluated.
+
+\section{Suggestions for Future Work}
+
+Several directions are proposed to extend and strengthen the findings of this
+thesis.
+
+The most immediate next step is the hardware deployment of the RANC-based SNN
+on a physical neuromorphic platform, such as an FPGA running the RANC
+architecture. This would enable direct measurement of energy-per-inference and
+latency, providing concrete evidence of the power efficiency advantages that are
+claimed theoretically in this work.
+
+A second direction concerns the development of a fully spike-driven Vision
+Transformer, eliminating the convolutional components in the SPS module and
+replacing them with pure spiking operations. This would make the Spiking ViT
+more compatible with neuromorphic hardware and further reduce power consumption
+during inference.
+
+Third, future work could explore the extension of both architectures to dynamic
+gesture inputs --- including dragging and scrolling --- which introduce additional
+temporal variability not addressed in this study. Encoding motion-dependent spike
+patterns could further improve context awareness in real-world interaction
+scenarios.
+
+Finally, a systematic energy benchmarking study comparing the proposed SNN
+models against CNN and standard ViT baselines in terms of millijoules per
+inference ($\text{mJ}/\text{inference}$) would significantly strengthen the
+practical case for neuromorphic finger recognition, closing an important gap
+identified in the current literature.
 
 \end{document}
