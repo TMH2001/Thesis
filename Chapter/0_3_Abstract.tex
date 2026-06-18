@@ -25,18 +25,16 @@
 \end{center}
 \vspace{1cm}
 
-Capacitive sensing technology has become a standard for touch-based interaction, yet most systems treat all finger contacts as uniform inputs. Recogning and classifying specific finger types (e.g., thumb, index, or middle finger) from capacitive images can significantly enhance human-computer interaction and device ergonomics. However, deploying such recognition models on battery-constrained edge devices requires a careful balance between classification accuracy and power efficiency.
+Capacitive sensing technology is widely used in touch-based interfaces, yet most systems treat all finger contacts as identical inputs. Recognizing specific finger types from capacitive images can improve user interaction and device usability, but implementing such functionality on resource-constrained devices requires models that are both accurate and energy-efficient.
 
-This thesis investigates the development of efficient deep learning models for capacitive image-based finger recognition, with a particular focus on Spiking Neural Networks (SNNs)—a bio-inspired and event-driven computing paradigm known for its low power consumption and hardware efficiency. Two SNN-based architectures are developed and evaluated in this study.
+This thesis investigates the use of Spiking Neural Networks (SNNs) for capacitive image-based finger recognition. Two SNN-based architectures are developed and evaluated. The first is a RANC-based SNN model, designed and trained entirely within the RANC framework. As a fully spiking architecture, it offers strong potential for deployment on neuromorphic and FPGA-based hardware while achieving recognition performance comparable to the CNN baseline of the CapFingerID dataset with reduced computational complexity.
 
-First, a RANC-based SNN model is proposed as a fully spiking architecture trained entirely from scratch using SNN principles. The model is designed within the Training, Testing, and Emulation environment provided by RANC, enabling strong potential for deployment on neuromorphic and hardware-accelerated platforms such as FPGAs. The proposed RANC-based SNN demonstrates recognition performance comparable to the CNN baseline introduced in the original CapFingerID study, while significantly reducing computational complexity and model parameters.
+The second architecture is a Spiking Vision Transformer (Spiking ViT), which combines spiking computation with transformer-based feature extraction. By integrating global attention mechanisms into a hybrid CNN-SNN framework, the proposed model achieves improved classification performance. Experimental results show that the Spiking ViT surpasses the original CapFingerID baseline by approximately 6\% in classification accuracy.
 
-Second, a Spiking Vision Transformer (Spiking ViT) architecture is explored to incorporate the powerful representation learning capability of Vision Transformers into the spiking domain. The proposed model adopts a hybrid CNN-SNN design, combining efficient spiking computation with global attention mechanisms to improve feature extraction and classification performance. Experimental results show that the Spiking ViT outperforms the original CapFingerID baseline model by approximately $6\%$ in classification accuracy.
-
-Overall, the findings demonstrate that SNN-based architectures—particularly transformer-enhanced spiking models—provide a promising and energy-efficient alternative to conventional deep learning approaches for finger-type recognition in next-generation interactive and embedded systems.
+The results demonstrate that SNN-based models, particularly transformer-enhanced architectures, provide an effective and energy-efficient solution for finger-type recognition on next-generation embedded systems.
 \begin{flushright}
 \begin{tabular}{@{}c@{}}
-\textbf{STUDENT}\\[1.5cm]
+\textbf{STUDENT}\\[2.5cm]
 \textbf{Tran Minh Hien}
 \end{tabular}
 \end{flushright}
