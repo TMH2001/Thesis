@@ -340,10 +340,85 @@ Further increasing the temporal window to \(T=8\) produced only marginal improve
 
 Overall, the experiments confirm that temporal encoding plays a crucial role in the performance of the proposed Spiking Vision Transformer. Moderate timestep values such as \(T=4\) and \(T=8\) provide the most favorable balance between recognition accuracy and computational efficiency, while excessively small temporal windows limit the ability of the network to exploit spike-based temporal dynamics effectively.
 
+\subsection{Energy Consumption Analysis}
+
+To evaluate the computational efficiency of the proposed model, the theoretical
+energy consumption of each architecture was estimated using the analytical model
+described in Chapter 1, Section~1.2.4.\ref{sec:energy_estimation}. Following the methodology adopted in recent
+Spiking Neural Network (SNN) studies, the energy consumption is estimated from
+the number of computational operations rather than measured directly on
+conventional hardware. Specifically, the energy cost of a multiply--accumulate
+(MAC) operation and an accumulate (AC) operation are assumed to be
+$4.6~\mathrm{pJ}$ and $0.9~\mathrm{pJ}$, respectively, according to the energy
+model proposed by Horowitz~\cite{horowitz20141}.
+
+Table~\ref{tab:energy_comparison} summarizes the estimated energy consumption of
+the evaluated models. The CNN baseline proposed in the original CapFingerId
+work~\cite{CapfingerId} requires approximately $19.936~\mathrm{mJ}$ per
+inference. Replacing the conventional convolutional architecture with a
+SpikeFormer significantly reduces the estimated energy consumption to
+$9.855~\mathrm{mJ}$, corresponding to an energy reduction of approximately
+50.6\% compared with the CNN baseline.
+
+The proposed RANC-based SNN further decreases the estimated energy consumption
+to only $4.895~\mathrm{mJ}$ per inference. Compared with the CNN baseline, the
+proposed model achieves a reduction of approximately 75.4\%, while consuming
+about 50.3\% less energy than the SpikeFormer model. These improvements
+demonstrate that exploiting sparse spike-based computation together with a
+hardware-oriented SNN implementation can substantially improve computational
+efficiency without relying on conventional dense MAC operations.
+
+\begin{table}[!t]
+\centering
+\caption{Estimated energy consumption of different models.}
+\label{tab:energy_comparison}
+\begin{tabular}{lc}
+\hline
+\textbf{Model} & \textbf{Energy (mJ)} \\
+\hline
+CNN Baseline~\cite{CapfingerId} & 19.936 \\
+SpikeFormer (8 encoder blocks, embedding dimension = 768) & 9.855 \\
+Proposed RANC-based SNN & \textbf{4.895} \\
+\hline
+\end{tabular}
+\end{table}
+
+For a clearer comparison, the relative energy consumption of each model is
+normalized with respect to the CNN baseline. The normalized energy consumption
+is therefore
+
+\begin{equation}
+E_{\mathrm{norm}}
+=
+\frac{E_{\mathrm{model}}}
+{E_{\mathrm{CNN}}}.
+\end{equation}
+
+Accordingly, the SpikeFormer consumes approximately $49.4\%$ of the energy
+required by the CNN baseline, while the proposed RANC-based SNN requires only
+$24.6\%$. These results confirm that the proposed architecture provides the
+highest energy efficiency among the evaluated models and further highlights the
+advantages of event-driven computation for capacitive image-based finger
+recognition.
+
+
 \subsection{Discussion}
 
 The experimental results demonstrate that the proposed Spiking Vision Transformer consistently outperforms the baseline model across most fingerprint classification tasks. The integration of spike-based self-attention enables the network to capture richer spatial and temporal relationships between fingerprint regions. Increasing the number of encoder blocks generally improves recognition performance, particularly for more complex tasks such as \textit{Thumb/Others} and \textit{5 Fingers}. However, the improvement gradually saturates at deeper configurations, indicating diminishing returns in performance compared with the additional computational cost.
 
 Similarly, larger embedding dimensions improve the representational capability of the transformer by allowing more discriminative spike-based feature encoding. The best overall performance was achieved using moderate-to-large embedding dimensions such as \(D=512\) and \(D=768\). The temporal encoding experiments also confirm the importance of spike-based temporal dynamics. Increasing the timestep from \(T=1\) to \(T=4\) significantly improved classification accuracy, while further increasing to \(T=8\) produced only marginal gains. Overall, the results indicate that moderate encoder depth, embedding dimension, and temporal window size provide the best balance between recognition performance and computational efficiency for capacitive fingerprint recognition.
+
+Furthermore, the estimated energy consumption demonstrates the advantage of
+spike-based computation over conventional ANN architectures. Compared with the
+CNN baseline, the SpikeFormer substantially reduces the energy required for a
+single inference by replacing dense multiply--accumulate (MAC) operations with
+sparse spike-driven accumulate (AC) operations. The proposed RANC-based SNN
+achieves an additional reduction in energy consumption, indicating that its
+hardware-oriented design further decreases the number of effective synaptic
+operations while preserving competitive recognition performance. These results
+suggest that the proposed model provides a favorable trade-off between
+classification accuracy and energy efficiency, making it well suited for
+resource-constrained and always-on sensing applications, where low-power
+operation is an important design requirement.
 
 \end{document}

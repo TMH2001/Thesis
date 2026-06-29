@@ -2,6 +2,37 @@
 \begin{document}
 
 This chapter presents two Spiking Neural Network (SNN)-based architectures for capacitive image-based fingerprint recognition. The first model is a RANC-based SNN designed as a fully spiking architecture trained entirely within the spiking domain and optimized for efficient neuromorphic hardware deployment. The proposed model utilizes burst encoding, overlapping segmentation, and Tea layers to extract spatio-temporal features from capacitive images. The second model is a Spiking Vision Transformer (Spiking ViT) based on the SpikeFormer framework, which incorporates spike-driven self-attention mechanisms to capture global dependencies in the input data. In addition, the chapter introduces the Spiking Patch Splitting (SPS) module and the Spiking Self-Attention (SSA) mechanism used in the transformer architecture. The input encoding process, spike aggregation strategy, and training methodology for both models are also described. Overall, the presented architectures aim to balance recognition performance, computational efficiency, and compatibility with neuromorphic computing systems.
+\section{Data Preparation}
+
+The raw capacitive sensing data are first imported from multiple text files and consolidated into a single data frame together with their associated metadata, including participant ID, handedness, finger label, and task information. Each raw sensor measurement is then parsed into a $27 \times 15$ capacitance matrix by extracting the timestamp, validating the expected data length, replacing missing or invalid entries with zeros, and converting all values to integers. Samples corresponding to the \texttt{PAUSE} task are subsequently removed to retain only valid finger interaction events.
+
+To isolate the finger contact region, a recursive connected-component (blob)
+detection algorithm is applied to each capacitance matrix using a predefined
+intensity threshold. Samples containing no blob or multiple disconnected blobs
+are discarded, ensuring that only images with a single finger contact remain.
+The extracted blob is then cropped to its bounding region. A statistical analysis
+of the cropped finger blobs shows that the majority of samples have widths
+between 5 and 8 pixels (Figure~\ref{fig:width_distribution}) and heights between
+6 and 8 pixels (Figure~\ref{fig:height_distribution}). Based on these
+distributions, a fixed resolution of $8 \times 8$ pixels is adopted for all samples,
+providing a standardized input representation while preserving virtually all
+spatial information contained in the original finger contact regions. The resulting
+preprocessed images are then serialized into a \texttt{.pkl} file for efficient
+storage and reuse in subsequent experiments.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Figure/width_distribution.png}
+    \caption{Distribution of finger blob widths. Most cropped finger blobs have widths between 5 and 8 pixels.}
+    \label{fig:width_distribution}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Figure/height_distribution.png}
+    \caption{Distribution of finger blob heights. Most cropped finger blobs have heights between 6 and 8 pixels.}
+    \label{fig:height_distribution}
+\end{figure}
 
 \section{Spiking Neural Network based on RANC Architecture}
 \label{sec:RANC-based-Spiking-Neural-Network}
@@ -81,11 +112,16 @@ To enhance both computational efficiency and feature extraction capability, the 
 This design enables simultaneous processing across multiple spiking layers, significantly reducing the effective computation time compared to a fully sequential architecture. Since each segment is handled independently, the network can exploit parallelism at the layer level, which is particularly beneficial in neuromorphic systems where parallel spike processing is inherently supported.
 
 In addition to improving computational speed, the overlapping segmentation strategy preserves continuity of spatial information across segment boundaries. This ensures that important local patterns are not lost and allows the model to maintain robustness against noise and variations in the capacitive images. As a result, the proposed approach achieves a balance between efficient computation and effective feature representation.
+
+The proposed architecture inherits the overall hierarchical design of the baseline Tea-based network. Multiple parallel Tea layers \cite{RANC} are first employed to extract local features independently, after which their outputs are concatenated and passed to a final Tea layer for feature aggregation. The classification stage is preserved from the original model, consisting of an Additive Pooling \cite{RANC} layer followed by a Softmax classifier. This design maintains the lightweight and event-driven characteristics of the Tea architecture while enabling hierarchical feature learning through multi-stage processing.
+
+Compared with the baseline, the proposed model introduces several architectural improvements to better exploit temporal spiking information. Instead of processing a small number of parallel branches, the spike sequence is partitioned into seven overlapping temporal segments, each of which is processed by an independent Tea layer. This temporal segmentation allows each branch to capture complementary temporal patterns before feature fusion. By increasing the number of parallel Tea layers and replacing spatial partitioning with temporal segmentation, the proposed architecture provides richer temporal feature representations while remaining fully compatible with the original Tea-based classification pipeline.
+
 \subsubsection{Spiking Feature Extraction}
 
-Spiking feature extraction in the proposed architecture is performed using the \textit{Tea layer}, which serves as the fundamental computational unit of the network. Each \textit{Tea layer} implements a hardware-constrained spiking transformation that approximates neuromorphic computation while remaining trainable using gradient-based methods.
+Spiking feature extraction in the proposed architecture is performed using the \textit{Tea layer} \cite{RANC}, which serves as the fundamental computational unit of the network. Each \textit{Tea layer} \cite{RANC} implements a hardware-constrained spiking transformation that approximates neuromorphic computation while remaining trainable using gradient-based methods.
 
-Let $\mathbf{x} \in \{0,1\}^N$ denote the input spike vector after encoding. The \textit{Tea layer} maintains two sets of parameters: a static weight matrix $\mathbf{W} \in \{-1,1\}^{N \times M}$ and a trainable connection matrix $\mathbf{C} \in [0,1]^{N \times M}$. During the forward pass, the connection matrix is discretized into a binary mask:
+Let $\mathbf{x} \in \{0,1\}^N$ denote the input spike vector after encoding. The \textit{Tea layer} \cite{RANC} maintains two sets of parameters: a static weight matrix $\mathbf{W} \in \{-1,1\}^{N \times M}$ and a trainable connection matrix $\mathbf{C} \in [0,1]^{N \times M}$. During the forward pass, the connection matrix is discretized into a binary mask:
 
 \[
 \hat{\mathbf{C}} = \text{round}(\mathbf{C}), \quad \hat{\mathbf{C}} \in \{0,1\}^{N \times M}
@@ -123,13 +159,14 @@ where $H(\cdot)$ is the Heaviside step function applied element-wise. During tra
 
 to enable gradient-based optimization. A custom gradient is used for the rounding operation to allow gradients to pass through unchanged during backpropagation.
 
-Each input segment is processed independently by a dedicated \textit{Tea layer}, allowing the network to extract localized spiking features in parallel. The resulting output vectors encode the spatio-temporal firing behavior of neurons and serve as high-level representations for subsequent aggregation and classification.
+Each input segment is processed independently by a dedicated \textit{Tea layer} \cite{RANC}, allowing the network to extract localized spiking features in parallel. The resulting output vectors encode the spatio-temporal firing behavior of neurons and serve as high-level representations for subsequent aggregation and classification.
 
 This formulation enables efficient computation using binary weights and sparse activations, while preserving the ability to train the network using standard deep learning techniques.
 
 \subsubsection{Spike-Based Aggregation and Classification}
 
-After the final spiking layer produces its output, the resulting spike activity must be aggregated to generate a classification decision. Unlike conventional neural networks, where outputs are typically continuous values, the proposed SNN produces binary spike events over time. Therefore, a dedicated aggregation mechanism is required to convert temporal spike patterns into class predictions.
+After the final spiking layer produces its output, the resultin
+g spike activity must be aggregated to generate a classification decision. Unlike conventional neural networks, where outputs are typically continuous values, the proposed SNN produces binary spike events over time. Therefore, a dedicated aggregation mechanism is required to convert temporal spike patterns into class predictions.
 
 Let $\mathbf{Z} \in \{0,1\}^{T \times N}$ denote the output spike matrix of the final layer, where $T$ is the number of time steps (ticks) and $N$ is the number of neurons. The first step of aggregation is to accumulate spike activity over time:
 

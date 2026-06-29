@@ -98,7 +98,7 @@
     {\section} % command
     [hang] % shape
     {\bfseries} % format
-    {\thechapter.\arabic{section}\ \ \ \ } % label
+    {\thesection\ \ \ \ } % label
     {0pt} %sep
     {} % before
     [] % after
@@ -108,7 +108,7 @@
     {\subsection} % command
     [hang] % shape
     {\bfseries} % format
-    {\thechapter.\arabic{section}.\arabic{subsection}\ \ \ \ } % label
+    {\thesubsection\ \ \ \ } % label
     {0pt} %sep
     {} % before
     [] % after
@@ -275,8 +275,17 @@
 %\fancyhead[LE]{\rightmark}
 \fancyfoot[LE, RO]{\thepage}
 
-\chapter{INTRODUCTION}
-\subfile{Chapter/1_Introduction} % Phần mở đầu
+\chapter*{INTRODUCTION}
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+
+\markboth{INTRODUCTION}{INTRODUCTION}
+\addcontentsline{toc}{chapter}{INTRODUCTION}
+\subfile{Chapter/1_Introduction}
+
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesubsection}{\thechapter.\arabic{section}.\arabic{subsection}}
 
 \newpage
 %\pagestyle{fancy} % Áp dụng header và footer
@@ -295,8 +304,17 @@
 \subfile{Chapter/4_Numerical_results}
 
 \newpage
-\chapter{CONCLUSIONS}
+\chapter*{CONCLUSIONS}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\markboth{CONCLUSIONS}{CONCLUSIONS}
+\addcontentsline{toc}{chapter}{CONCLUSIONS}
+\setcounter{section}{0}
+\setcounter{subsection}{0}
 \subfile{Chapter/5_Conclusions}
+
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesubsection}{\thechapter.\arabic{section}.\arabic{subsection}}
 
 % ===================================================
 \newpage

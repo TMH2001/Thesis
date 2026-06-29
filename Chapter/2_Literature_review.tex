@@ -64,15 +64,16 @@ Furthermore, prior work has demonstrated that capacitive images can be effective
 Despite these advances, capacitive fingerprint data remains challenging due to its low resolution, high noise levels, and sensitivity to touch variations such as position and pressure. These challenges motivate the exploration of more robust and efficient models, particularly energy-efficient approaches such as Spiking Neural Networks, which are better suited for deployment on edge devices.
 
 \subsubsection{CapFingerId Dataset}
-To support the training and evaluation process, the CapFingerId \cite{CapfingerId} dataset was constructed and publicly released to the research community.
 
-The data were collected from 20 participants (15 male and 5 female) with an average age of 22.4. The experimental device was an \textbf{LG Nexus 5} smartphone, modified at the kernel level to access raw data from the \textbf{Synaptics ClearPad 3350} touch sensor. Participants performed three fundamental touch interactions using all ten fingers: tapping, dragging, and scrolling in various directions.
+The CapFingerId dataset~\cite{CapfingerId} was introduced as one of the first publicly available datasets for finger recognition using capacitive images captured from commodity smartphone touchscreens. The dataset was released together with baseline CNN models to facilitate research on learning-based finger identification from low-resolution capacitive sensing data.
 
-In total, 921,538 raw capacitive images were recorded at a rate of 20 frames per second. After preprocessing, including filtering invalid samples and applying blob detection to identify touch regions, the final dataset consists of 455,709 “blob images.”
+The dataset was collected from 20 participants (15 male and 5 female) with a mean age of 22.4 ($Std = 2.8$). Among them, 18 were right-handed and 2 were left-handed. Hand length ranged from 16.3~cm to 20.8~cm ($M = 18.9$~cm, $Std = 1.3$). Data acquisition was performed on an \textbf{LG Nexus~5} smartphone equipped with a \textbf{Synaptics ClearPad~3350} mutual-capacitive touchscreen. The modified firmware enabled access to raw capacitive images with a sensor resolution of $15 \times 27$, where each sensing cell corresponds to approximately $4.1 \times 4.1$~mm on the touchscreen. Capacitive images were sampled at 20 frames per second during user interactions.
 
-Each capacitive image has a resolution of 15 × 27 pixels, where each pixel corresponds to an area of 4.1 mm × 4.1 mm on the touchscreen surface. Pixel values represent changes in capacitance (measured in pF) relative to a baseline.
+Participants performed three representative touch interactions using all ten fingers: tapping, dragging, and scrolling. Each finger completed 30 repetitions of every task, with the scrolling task equally divided into horizontal and vertical directions, resulting in 900 trials per participant. Touch locations were randomized, and finger order was balanced using a Latin square to reduce ordering effects. Capacitive images were automatically labeled according to the instructed finger and interaction task.
 
-The dataset is labeled for all ten fingers, enabling various classification scenarios. Common tasks include distinguishing between left and right thumbs, thumb versus index finger, and full classification across all ten fingers.
+After removing empty samples and frames containing multiple simultaneous touches, blob detection was applied to isolate individual contact regions. Each detected blob was cropped and re-centered into a $15 \times 27$ matrix, producing a total of 455,709 labeled capacitive images. Unlike sequence-based datasets, each sample consists of a single capacitive frame representing one finger contact.
+
+The dataset supports multiple finger classification scenarios, including left-versus-right thumb, left-versus-right index finger, thumb-versus-index, thumb-versus-other fingers, five-finger classification, and full ten-finger classification. Using convolutional neural networks as baseline models, the authors demonstrated that reliable recognition of all ten fingers remains challenging because of the limited spatial resolution of smartphone capacitive sensors. Nevertheless, distinguishing between the left and right thumbs achieved an accuracy exceeding 92\%, establishing CapFingerId as an important benchmark for capacitive finger recognition on commodity mobile devices.
 
 \begin{figure}[h]
     \centering
@@ -131,6 +132,102 @@ The dataset is labeled for all ten fingers, enabling various classification scen
     \caption{Representative samples from dataset.}
     \label{fig:dataset_samples}
 \end{figure}
+
+\subsubsection{SpeciFingers Dataset}
+To support the training and evaluation of finger identification models on tabletop 
+capacitive touchscreens, the SpeciFingers~\cite{huang2024specifingers} dataset was 
+constructed and publicly released alongside the corresponding model and source code.
+
+The data were collected from 20 participants (13 male and 7 female) with a mean age 
+of 27.6 ($Std = 4.60$). Among the participants, 18 were right-handed and 2 were 
+left-handed. Hand length, measured from the wrist crease to the tip of the middle 
+finger, ranged from 15.8~cm to 19.8~cm ($M = 18.37$~cm, $Std = 1.12$). The 
+experimental device was a \textbf{Wacom DTH-2242} tabletop touchscreen with a 21.5-inch 
+display ($475.2$~mm $\times$ $267.3$~mm) and a screen resolution of 
+$1920 \times 1080$ pixels. Raw touch sensitivity data was accessed via \textbf{Wacom's 
+Feel\texttrademark{} Multi-Touch SDK} and recorded at a rate of 100 frames per 
+second (every 10~ms). The touchscreen provides a capacitive sensor resolution of 
+$122 \times 70$, with sensitivity values ranging from 0 to 65,535. The device was 
+placed on a desk at an angle of $20^\circ$, and participants were instructed to 
+hover their hands naturally over the screen during interactions.
+
+Participants performed four types of single-finger touch interactions using all ten 
+fingers: tapping, pressing, sliding (in four directions: up, down, left, and right), 
+and dragging. The tapping task required participants to tap a $50 \times 50$~px 
+target appearing at randomized positions. The pressing task required sustaining 
+contact for at least 0.5 seconds. The sliding task covered four cardinal directions, 
+and the dragging task involved moving a target element to a destination position. 
+Each task was repeated 40 times per finger, resulting in $10~\text{fingers} \times 
+4~\text{tasks} \times 40~\text{repetitions} = 1{,}600$ trials per participant. The 
+order of fingers was balanced using a \textbf{Balanced Latin Square}, and task order was 
+randomized for each finger. Recording of each action was triggered automatically 
+upon finger contact and terminated upon finger release, eliminating the need for 
+manual segmentation.
+
+After filtering incorrectly labeled trials and removing sequences containing 
+unintentional touches via blob detection, the final dataset comprises 38,153 
+sequences of capacitive images. Each raw sensitivity frame is represented as a 
+$122 \times 70$ matrix, from which contact blobs are extracted and resized to 
+$224 \times 224$ pixels for use as model input. The average sequence length varies 
+by action type: approximately 10.81 frames for tapping, 20.46 frames for sliding, 
+74.50 frames for dragging, and 84.26 frames for pressing.
+
+The dataset is labeled for all ten fingers across four action types, supporting a 
+range of classification scenarios. The authors explored three finger grouping 
+configurations: classification across all ten fingers of both hands 
+($\text{ALL}_{L\&R}$), all five fingers of a single hand ($\text{ALL}_{L/R}$), 
+and a three-class grouping consisting of the thumb, little finger, and the remaining 
+three middle fingers combined into a single category ($TM^{+}L$). The last 
+configuration was motivated by the observation that the index, middle, and ring 
+fingers produce highly similar capacitive patterns that are difficult to distinguish 
+reliably.
+
+Compared to the previously available \textbf{CapFingerId} dataset~\cite{CapfingerId}, 
+\textbf{SpeciFingers} is larger in sequence count (38,153 vs.\ 17,416), covers a greater 
+variety of action types (4 vs.\ 3), and was collected on a higher-resolution 
+tabletop device rather than a smartphone, making it particularly relevant for 
+research on finger-specific interaction in tabletop computing environments.
+
+\subsubsection{Learning-Based Finger Recognition}
+
+Following the release of the CapFingerId dataset, Le \textit{et al.}~\cite{CapfingerId} established one of the first deep learning baselines for capacitive image-based finger recognition. Prior to training deep models, the authors explored handcrafted geometric descriptors extracted from capacitive touch blobs, including blob area, average capacitance, ellipse dimensions, and orientation. These features were evaluated using conventional machine learning classifiers such as Random Forests but exhibited limited discriminative capability, particularly for distinguishing fingers with highly similar touch patterns. Motivated by these limitations, the authors proposed a convolutional neural network (CNN) that directly learns spatial representations from raw capacitive images, eliminating the need for manual feature engineering.
+
+The proposed CNN accepts a single $15 \times 27$ capacitive image as input and predicts the corresponding finger class. The model was evaluated under multiple classification scenarios, including left-versus-right thumb, left-versus-right index finger, thumb-versus-index, thumb-versus-other fingers, five-finger, and ten-finger classification. Experimental results demonstrated that CNN-based feature learning consistently outperformed handcrafted feature-based approaches across all tasks. In particular, the model achieved over 92% accuracy for distinguishing between the left and right thumbs, while full ten-finger classification remained challenging because the low spatial resolution of commodity smartphone capacitive sensors provides insufficient discriminative information. These findings established CNNs as an effective baseline for capacitive finger recognition and highlighted the need for more powerful architectures capable of extracting richer representations from low-resolution capacitive images.
+
+Following the CapFingerId study, Huang et al.~\cite{huang2024specifingers}
+argued that finger touch data should be regarded as a temporal sequence rather
+than a collection of independent capacitive images. They observed that the
+capacitive response evolves throughout an interaction, with the contact area
+and sensitivity values changing continuously over time. Based on this
+observation, they proposed an encoder--decoder architecture that jointly
+models spatial and temporal information from capacitive image sequences
+instead of performing frame-wise classification. During preprocessing,
+contact blobs were extracted from each frame, resized to a fixed resolution,
+and normalized to a uniform sequence length through interpolation or temporal
+sampling. Online data augmentation, including random flipping and rotation,
+was also applied to improve model generalization.
+
+The proposed architecture consists of a CNN encoder followed by an LSTM
+decoder. The CNN encoder extracts spatial representations from individual
+capacitive images, while the LSTM aggregates temporal dependencies across
+consecutive frames to produce the final finger prediction. Experimental
+results on both the SpeciFingers and CapFingerId datasets demonstrated that
+incorporating temporal information consistently improves recognition
+performance over the frame-based CNN baseline. In particular, the proposed
+model improved the three-class ($TM^{+}L$) classification accuracy by nearly
+10 percentage points on the SpeciFingers dataset and by more than 12
+percentage points on the CapFingerId dataset. These results demonstrate that
+modeling the temporal dynamics of capacitive image sequences is an effective
+strategy for capacitive image-based finger recognition.
+
+In this thesis, the CNN model proposed by Le \textit{et al.}~\cite{CapfingerId}
+is adopted as the primary baseline for evaluating the proposed models.
+This choice is motivated by the fact that it represents the first deep learning
+baseline for capacitive image-based finger recognition and has been extensively
+evaluated on the CapFingerId dataset, which is also used throughout this work.
+Its relatively simple architecture provides a fair and well-established
+reference, allowing the effectiveness of the proposed models to be assessed
+through direct comparison under the same experimental setting.
 
 \subsection{Spiking Neural Networks (SNN)}
 
@@ -308,4 +405,119 @@ Despite these advancements, existing SNN-ViT approaches are predominantly evalua
 To address this gap, this thesis adopts a SpikeFormer-based Spiking Vision Transformer as the core architecture for the CapFingerId task. Specifically, the proposed model largely follows the original SpikeFormer design \cite{zhou2023spikeformer}, while introducing task-specific adaptations to better suit low-resolution capacitive data. In particular, the number of Spiking Transformer encoder blocks and the feature embedding dimensions are carefully adjusted to balance representational capacity and computational efficiency under resource-constrained settings.
 
 By retaining the core spike-driven self-attention mechanism and direct training strategy with surrogate gradients, the model preserves the advantages of SpikeFormer in capturing global dependencies. At the same time, the architectural scaling enables more efficient processing of small, noisy inputs, making it more suitable for capacitive fingerprint classification. This design choice allows the thesis to focus on evaluating the applicability and effectiveness of Spiking Vision Transformers in a new problem domain, rather than proposing a fundamentally new architecture.
+
+\subsubsection{Energy Consumption Estimation}
+\label{sec:energy_estimation}
+
+Following the methodology adopted in recent Spiking Transformer \cite{zhou2023spikeformer} studies, the
+energy consumption of the proposed model is estimated analytically rather than
+measured directly on conventional GPU hardware. This estimation is based on the
+computational cost of individual operations, where a multiply--accumulate (MAC)
+operation consumes significantly more energy than an accumulate (AC) operation.
+According to the energy model proposed by Horowitz \cite{horowitz20141} for a 45 nm CMOS process, the
+energy cost of a single MAC and AC operation is assumed to be
+$E_{\mathrm{MAC}} = 4.6~\mathrm{pJ}$ and
+$E_{\mathrm{AC}} = 0.9~\mathrm{pJ}$, respectively.
+
+For an artificial neural network (ANN), the energy consumption of the
+$l^{\mathrm{th}}$ layer is estimated as
+
+\begin{equation}
+E_{\mathrm{ANN}}^{(l)}
+=
+N_{\mathrm{MAC}}^{(l)}
+E_{\mathrm{MAC}},
+\end{equation}
+
+where $N_{\mathrm{MAC}}^{(l)}$ denotes the number of multiply--accumulate
+operations required by the layer. Consequently, the total energy consumption of
+an ANN is
+
+\begin{equation}
+E_{\mathrm{ANN}}
+=
+\sum_{l=1}^{L}
+N_{\mathrm{MAC}}^{(l)}
+E_{\mathrm{MAC}},
+\end{equation}
+
+where $L$ is the total number of layers.
+
+For a spiking neural network (SNN), only active spikes trigger accumulation
+operations. Therefore, the computational cost depends on the firing rate of each
+layer. The firing rate of layer $l$ is defined as
+
+\begin{equation}
+r^{(l)}
+=
+\frac{N_{\mathrm{spike}}^{(l)}}
+{N_{\mathrm{neuron}}^{(l)}},
+\end{equation}
+
+where $N_{\mathrm{spike}}^{(l)}$ is the total number of emitted spikes and
+$N_{\mathrm{neuron}}^{(l)}$ is the total number of neurons evaluated over all
+simulation time steps.
+
+The number of synaptic accumulation operations (SOPs) is then estimated by
+
+\begin{equation}
+N_{\mathrm{SOP}}^{(l)}
+=
+r^{(l)}
+T
+N_{\mathrm{MAC}}^{(l)},
+\end{equation}
+
+where $T$ denotes the number of simulation time steps.
+
+The energy consumption of a spiking layer is therefore
+
+\begin{equation}
+E_{\mathrm{SNN}}^{(l)}
+=
+N_{\mathrm{SOP}}^{(l)}
+E_{\mathrm{AC}}.
+\end{equation}
+
+For a general spiking neural network, some layers may operate on continuous-valued
+inputs and therefore require MAC operations, while the remaining layers process
+spike trains and only perform AC operations. Let $\mathcal{M}$ denote the set of
+layers requiring MAC operations and $\mathcal{A}$ denote the set of layers
+performing AC operations. The total energy consumption of an SNN can then be
+estimated as
+
+\begin{equation}
+E_{\mathrm{SNN}}
+=
+\sum_{l\in\mathcal{M}}
+N_{\mathrm{MAC}}^{(l)}
+E_{\mathrm{MAC}}
++
+\sum_{l\in\mathcal{A}}
+N_{\mathrm{SOP}}^{(l)}
+E_{\mathrm{AC}}.
+\end{equation}
+
+Substituting Eq.~(5) into the above expression yields
+
+\begin{equation}
+E_{\mathrm{SNN}}
+=
+\sum_{l\in\mathcal{M}}
+N_{\mathrm{MAC}}^{(l)}
+E_{\mathrm{MAC}}
++
+E_{\mathrm{AC}}
+\sum_{l\in\mathcal{A}}
+r^{(l)}
+T
+N_{\mathrm{MAC}}^{(l)}.
+\end{equation}
+
+In many SNN architectures, such as SpikeFormer~\cite{zhou2023spikeformer}, only
+the input encoding layer operates on continuous-valued inputs, whereas all
+subsequent layers process spike trains. In this case,
+$\mathcal{M}$ contains only the first layer and Eq.~(8) naturally reduces to the
+energy estimation formula commonly adopted in the SpikeFormer \cite{zhou2023spikeformer} literature.
+
 \end{document}
